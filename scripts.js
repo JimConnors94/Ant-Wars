@@ -1,11 +1,17 @@
 /* 
 
 
- Colony population:
+ Colony population and stats:
 
-    Every second, one egg is added to players inventory.
+    Every second, one egg is added to players egg inventory.
 
     Hatching an ant cost one egg.
+
+    Every living ant is counted towards population
+
+    Killed ants are removed from population.
+
+    When population is equal to 999 the game ends in partial victory. 
 
     if a Worker type ant is hatched, one ant is created with the following stats:
 
@@ -29,15 +35,18 @@
     Food cost: 8
 
 
+    Colony's Attack, Defence, Food Gathering, and Food Cost stats, are the sum of the individual ants stats combined.
+
+
  Food system:
 
     Gathering
 
         Food is gathered every second and added to food store.
 
-        The total food gathered each second is equal to the sum of all colonys ant's food gathering stats. 
+        The total food gathered each second is equal to the sum of all colonys ants food gathering stats. 
 
-        Food gathered is in fractions, but only the floor of the number appears to the player.
+        Food can be gathered in fractions, but only the floor of the number appears to the player.
 
     
 
@@ -56,9 +65,9 @@
 
         Ants will die randomly until the food cost of dead ants is greater to or equal the food cost deficit.
 
-        Guard and Warrior ants die before worker ants. 
+        Guard and Warrior ants die before Worker ants. 
 
-        If the population of Guard and warrior ants equal zero, food shortage will then affect worker ants.
+        If the population of Guard and Warrior ants equal zero, food shortage will then affect Worker ants.
 
         ex. 
 
@@ -74,7 +83,7 @@
 
         2 Worker ants now die. = 2 food cost
 
-        Food deficit is equal to zero. dying ends. 
+        Food deficit is equal to food cost of dead ants. 
 
         Population is now:
 
@@ -87,7 +96,81 @@
 
      Enemy colony:
 
-        The enemy adds to their population
+        The enemy adds to their population at one per 1.5 second.
+
+        Enemy ants have individual stats are randomly generated. 
+
+        Individual enemy ants total stats have a minimum of 5 and a maximum of 8. 
+
+        ex. An enemy ant could have 3 attack and 5 defence, while the next could have 4 attack and 1 defence.
+
+        Enemy colony's Attack and Defence stats are the sum of the individual ants stats combined.
+
+        Food is not a factor for the enemy. 
+
+        
+
+
+     Raiding:
+
+        Every thirty seconds the enemy will attempt to raid you.
+
+        There is a 50% chance their raid will fail.
+
+        If their raid is sucessful, it will kill your ants.
+
+        Loss = 10 x Enemy Attack / Players Defence
+
+        Loss rounds to nearest integer
+
+        Guard and Warrior ants die before Worker ants. 
+
+        If the population of Guard and Warrior ants equal zero, Worker ants would then die.
+
+            Ex. 
+                Player has 276 Defence
+
+                Enemy has 198 Attack
+                
+                10 x 198/276 = 7.1
+
+                7.1 rounds down to 7
+
+                7 ants die
+        
+        
+
+        The player has the ability to raid the enemy in the same way every 30 seconds by pressing a button.
+
+        
+        
+     Victory:
+
+        Victory is acheived when Enemy colony's population equals zero.
+
+        or
+
+        Victory is acheived if you reach 999 population before the enemy.
+
+    Defeat
+
+        The Enemy's population reaching 999 will result in defeat.
+
+        or
+
+        Your population reaching zero, due to either food shortage or enemy raid will result in defeat.
+
+
+
+
+
+
+
+
+
+
+
+       
 
 
 
