@@ -1,25 +1,38 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="beveled-box_01">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ant Wars</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1></h1>
 
-        <p>Hatch Warrior Ant</p>
-      
-      </div>
+    <div>
+      <img src="img/ANTWARS.png" alt="Antwars title";>
 
+    </div>
 
-      <div class="beveled-box_02">
+    
 
-        <p>Colony Stats</p>
-      
-      </div>
+    <div id="buttons">
+      <button onclick="startNewGame()">Start New Game</button>
+      <button onclick="saveGame()">Save Game</button>
+      <button onclick="loadGame()">Load Game</button>
+      <button onclick="nameOfFunction()">My New Button</button>
+    </div>
 
+    <div id="playerStats">
+      <h2>Your Ant Hill</h2>
+      <p>Food: <span id="foodCount">0</span></p>
+      <p>Eggs: <span id="eggCount">0</span></p>
+      <p>Workers: <span id="workerCount">0</span></p>
+      <p>Warriors: <span id="warriorCount">0</span></p>
+      <p>Guards: <span id="GuardCount">0</span></p>
+    </div>
 
-</body>
+    <script src="scripts.js"></script>
+  </body>
 </html>
