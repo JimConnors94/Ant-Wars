@@ -99,10 +99,9 @@ const defaultGameState = {
   
   document.addEventListener("DOMContentLoaded", initializeGameState);
 
+    }
 
  function Hatchant() {
-
-    const { Worker, Warrior, Gaurd } = environment;
       
         case 'Hatch Worker':
 
@@ -110,8 +109,8 @@ const defaultGameState = {
         break;} 
         
         else {
-        player.addWorker(1);
-        player.Hatchegg(1);
+            guards += 1;
+            eggs -= 1;
         break;}
         
         case 'Hatch Warrior':
@@ -120,8 +119,8 @@ const defaultGameState = {
         break;} 
 
         else {
-        player0.addWarrior(1);
-        player0.Hatchegg(1);
+            warriors += 1;
+            eggs -= 1;
         break;}
 
         case 'Hatch Guard':
@@ -130,36 +129,145 @@ const defaultGameState = {
         break;} 
         
         else {
-        player.addGuard(1);
-        player.Hatchegg(1);
+            workers += 1;
+            eggs -= 1;
         break;}
 
     }
 
  function raidTimer () 
+    setInterval() {
+    if (Math.random() < 0.5) {
 
-    setInterval()
+        const enemyAttack = enemyants * 5
+
+        playerDefence = guards * 16 + warriors * 8 + workers * 1
+
+        const loss = Math.round(10 * enemyAttack / playerDefence);
+
+            let antsToKill = loss;, 
+
+            while (loss > 0)
+
+                if (guards > 0 & warriors > 0) {
+    
+                    if (Math.random() < 0.5) {
+
+                        guards -= 1;
+                        loss -= 1; 
+    
+                    } else {
+                        warriors -= 1;
+                        loss -= 8; 
+                    }
+    
+                } else if (guards > 0) {
+    
+                    guards -= 1;
+                    loss -= 8; 
+    
+                } else if (warriors > 0) {
+    
+                    warriors -= 1;
+                    loss -= 8; 
+    
+                } else if (workers > 0) {
+                    workers -= 1;
+                    loss -= 1; 
+    
+                } else {
+                    break; 
+                }
+            }
+
+        }
+    
+        updatePlayerStats();
+    }, 30000);
+
+
+            
+        
  }
 
 
  function foodCostTimer (){
 
-    setInterval()
+    setInterval() {
 
+        const foodCost = workers * 1 + guards * 8 + warriors * 8;) 
+
+        food -= Math.floor(foodCost);
+
+        if food < 0
+
+        let foodDeficit = food
+
+        while (foodDeficit > 0)
+
+            if (guards > 0 & warriors > 0) {
+
+                if (Math.random() < 0.5) {
+
+                    guards -= 1;
+                    foodDeficit -= 8; 
+
+                } else {
+                    warriors -= 1;
+                    foodDeficit -= 8; 
+                }
+
+            } else if (guards > 0) {
+
+                guards -= 1;
+                foodDeficit -= 8; 
+
+            } else if (warriors > 0) {
+
+                warriors -= 1;
+                foodDeficit -= 8; 
+
+            } else if (workers > 0) {
+                workers -= 1;
+                foodDeficit -= 1; 
+
+            } else {
+                break; 
+            }
+        }
+        gameState.playerAntHill.resources.food = 0; 
+    }
+
+    updatePlayerStats();
+}, 10000);
+
+
+
+
+
+
+
+    }
  }
 
 function foodGathheringTimer  {
 
-    setInterval()
+    setInterval(){
+        
+        const foodGathered = workers * 1 + guards * 0.1 warriors * 0.1;)
 
+        food += Math.floor(foodGathered);
 
-}
+        updatePlayerStats();
+
+        1000);
+    }
 
 }
 
 function Layegg  {
 
-    setInterval()
+    setInterval(gameState.playerAntHill.resources.eggs++; 1000)
 
 
 }
