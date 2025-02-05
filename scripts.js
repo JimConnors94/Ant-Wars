@@ -27,7 +27,7 @@ const defaultGameState = {
 let gameState = {};
 
 function updatePlayerStats() {
-  document.getElementById("Eggs").textContent =
+  document.getElementById("eggCount").textContent =
     gameState.playerAntHill.resources.eggs;
 
   document.getElementById("foodCount").textContent =
@@ -99,7 +99,7 @@ function startTimer() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
-  startGameTimer();
+  startTimer();
 });
 
 //  function Hatchant() {
