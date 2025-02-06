@@ -12,6 +12,7 @@ const defaultGameState = {
       workers: 10,
       warriors: 0,
       guards: 0,
+      enemy: 10,
     },
   },
   enemyAntHill: {
@@ -41,6 +42,9 @@ function updatePlayerStats() {
 
   document.getElementById("guardCount").textContent =
     gameState.playerAntHill.ants.guards;
+
+  document.getElementById("enemyCount").textContent =
+    gameState.playerAntHill.ants.enemy;
 }
 
 function initializeGameState() {
@@ -83,8 +87,20 @@ function loadGame() {
   }
 }
 
-function nameOfFunction() {
-  console.log("Hey this is your new function oh yeah");
+function calculateStats() {
+  
+  const enemyAttack = (gameState.playerAntHill.ants.enemy) * 5;
+
+  const playerDefence =
+    gameState.playerAntHill.ants.guards * 16 +
+    gameState.playerAntHill.ants.warriors * 8 +
+    gameState.playerAntHill.ants.workers * 1;
+
+  document.getElementById("playerDefence").textContent = playerDefence;
+
+  document.getElementById("enemyAttack").textContent = enemyAttack;
+
+  console.log("Stats calculated");
 }
 
 function startTimer() {
@@ -92,15 +108,122 @@ function startTimer() {
     gameState.gameTimer += 1;
 
     document.getElementById("gameTimer").innerText = gameState.gameTimer;
+
+    everySecondEvents();
+
+    if (gameState.gameTimer % 10 === 0) {
+      everyTenSecondEvents();
+    }
+
+    if (gameState.gameTimer % 30 === 0) {
+      everyThirtySecondEvents();
+    }
   }, 1000);
 
   console.log("Timer Started");
 }
 
+function everySecondEvents() {
+  gameState.playerAntHill.ants.enemy++;
+  gameState.playerAntHill.resources.eggs++;
+
+  const foodGathered =
+    gameState.playerAntHill.ants.workers * 1 +
+    gameState.playerAntHill.ants.guards * 0.1 +
+    gameState.playerAntHill.ants.warriors * 0.1;
+  gameState.playerAntHill.resources.food += foodGathered;
+
+  updatePlayerStats();
+  calculateStats();
+
+  console.log("The Queen has laid an Egg");
+  console.log("Food has been gathered");
+}
+
+function everyTenSecondEvents() {
+  const foodCost =
+    gameState.playerAntHill.ants.workers * 1 +
+    gameState.playerAntHill.ants.guards * 8 +
+    gameState.playerAntHill.ants.warriors * 8;
+  gameState.playerAntHill.resources.food -= foodCost;
+
+  updatePlayerStats();
+
+  console.log("Food has been consumed");
+
+  if (Math.random() < 0.5) {
+    console.log("The Enemy has raided!");
+
+    const enemyAttack = gameState.playerAntHill.ants.enemy * 5;
+
+    const playerDefence =
+      gameState.playerAntHill.ants.guards * 16 +
+      gameState.playerAntHill.ants.warriors * 8 +
+      gameState.playerAntHill.ants.workers * 1;
+  }
+}
+
+function everyThirtySecondEvents() {
+  if (Math.random() < 0.5) {
+    const antLoss = Math.round((10 * enemyAttack) / playerDefence);
+
+    // if (
+    //   gameState.playerAntHill.ants.guards > 0 &&
+    //   gameState.playerAntHill.ants.warriors > 0
+    // ) {
+    //   if (Math.random() < 0.5) gameState.playerAntHill.ants.guards -= 1;
+    // } else {
+    //   gameState.playerAntHill.ants.warriors -= 1;
+
+    //   else {gameState.playerAntHill.ants.workers -=1;
+    //   }
+
+    console.log("The Enemy has raided!");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
   startTimer();
+  calculateStats();
 });
+
+//         const loss = Math.round(10 * enemyAttack / playerDefence);
+
+//             let antsToKill = loss;,
+
+//             while (loss > 0)
+
+//                 if (guards > 0 & warriors > 0) {
+
+//                     if (Math.random() < 0.5) {
+
+//                         guards -= 1;
+//                         loss -= 1;
+
+//                     } else {
+//                         warriors -= 1;
+//                         loss -= 8;
+//                     }
+
+//                 } else if (guards > 0) {
+
+//                     guards -= 1;
+//                     loss -= 8;
+
+//                 } else if (warriors > 0) {
+
+//                     warriors -= 1;
+//                     loss -= 8;
+
+//                 } else if (workers > 0) {
+//                     workers -= 1;
+//                     loss -= 1;
+
+//                 } else {
+//                     break;
+//                 }
+//             }
 
 //  function Hatchant() {
 
