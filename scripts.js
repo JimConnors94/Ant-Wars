@@ -6,13 +6,13 @@ const defaultGameState = {
   playerAntHill: {
     resources: {
       eggs: 0,
-      food: 100,
+      food: 0,
     },
     ants: {
-      workers: 10,
-      warriors: 0,
-      guards: 0,
-      enemy: 10,
+      workers: 30,
+      warriors: 5,
+      guards: 5,
+      enemy: 35,
     },
   },
   enemyAntHill: {
@@ -27,7 +27,7 @@ const defaultGameState = {
 
 let gameState = {};
 
-function updatePlayerStats() {
+function updateResourceStats() {
   document.getElementById("eggCount").textContent =
     gameState.playerAntHill.resources.eggs;
 
@@ -45,6 +45,10 @@ function updatePlayerStats() {
 
   document.getElementById("enemyCount").textContent =
     gameState.playerAntHill.ants.enemy;
+
+  const { enemyAttack, playerDefence } = calculateCombatStats();
+  document.getElementById("playerDefence").textContent = playerDefence;
+  document.getElementById("enemyAttack").textContent = enemyAttack;
 }
 
 function initializeGameState() {
@@ -56,7 +60,9 @@ function initializeGameState() {
     gameState = JSON.parse(JSON.stringify(defaultGameState));
   }
 
-  updatePlayerStats();
+  updateResourceStats();
+  calculateCombatStats();
+  startTimer();
 
   console.log(savedState ? "Loaded saved game." : "Starting a new game.");
 }
@@ -64,7 +70,8 @@ function initializeGameState() {
 function startNewGame() {
   localStorage.setItem("antWarsGameState", JSON.stringify(defaultGameState));
 
-  updatePlayerStats();
+  startTimer();
+  updateResourceStats();
 
   console.log("New game started.");
 }
@@ -81,27 +88,24 @@ function loadGame() {
   if (savedState) {
     gameState = savedState;
     console.log("Game loaded.");
-    updatePlayerStats();
+    updateResourceStats();
   } else {
     console.log("No saved game found.");
   }
 }
 
-function calculateStats() {
-  
-  const enemyAttack = (gameState.playerAntHill.ants.enemy) * 5;
+function calculateCombatStats() {
+  const enemyAttack = gameState.playerAntHill.ants.enemy * 5;
 
   const playerDefence =
     gameState.playerAntHill.ants.guards * 16 +
     gameState.playerAntHill.ants.warriors * 8 +
     gameState.playerAntHill.ants.workers * 1;
 
-  document.getElementById("playerDefence").textContent = playerDefence;
-
-  document.getElementById("enemyAttack").textContent = enemyAttack;
-
-  console.log("Stats calculated");
+  return { enemyAttack, playerDefence };
 }
+
+console.log("Stats calculated");
 
 function startTimer() {
   setInterval(() => {
@@ -115,7 +119,7 @@ function startTimer() {
       everyTenSecondEvents();
     }
 
-    if (gameState.gameTimer % 30 === 0) {
+    if (gameState.gameTimer % 5 === 0) {
       everyThirtySecondEvents();
     }
   }, 1000);
@@ -128,64 +132,87 @@ function everySecondEvents() {
   gameState.playerAntHill.resources.eggs++;
 
   const foodGathered =
-    gameState.playerAntHill.ants.workers * 1 +
-    gameState.playerAntHill.ants.guards * 0.1 +
-    gameState.playerAntHill.ants.warriors * 0.1;
+    gameState.playerAntHill.ants.workers * 10 +
+    gameState.playerAntHill.ants.guards * 1 +
+    gameState.playerAntHill.ants.warriors * 1;
   gameState.playerAntHill.resources.food += foodGathered;
 
-  updatePlayerStats();
-  calculateStats();
+  console.log(foodGathered + 1 + ' food has been gathered');
 
-  console.log("The Queen has laid an Egg");
-  console.log("Food has been gathered");
+  updateResourceStats();
+  calculateCombatStats();
 }
 
 function everyTenSecondEvents() {
   const foodCost =
-    gameState.playerAntHill.ants.workers * 1 +
-    gameState.playerAntHill.ants.guards * 8 +
-    gameState.playerAntHill.ants.warriors * 8;
+    gameState.playerAntHill.ants.workers * 10 +
+    gameState.playerAntHill.ants.guards * 80 +
+    gameState.playerAntHill.ants.warriors * 80;
   gameState.playerAntHill.resources.food -= foodCost;
 
-  updatePlayerStats();
+  updateResourceStats();
 
-  console.log("Food has been consumed");
-
-  if (Math.random() < 0.5) {
-    console.log("The Enemy has raided!");
-
-    const enemyAttack = gameState.playerAntHill.ants.enemy * 5;
-
-    const playerDefence =
-      gameState.playerAntHill.ants.guards * 16 +
-      gameState.playerAntHill.ants.warriors * 8 +
-      gameState.playerAntHill.ants.workers * 1;
-  }
+  console.log(foodCost + 1 + ' has been consumed');
 }
 
 function everyThirtySecondEvents() {
+  console.log("The Enemy attempted a raid!");
   if (Math.random() < 0.5) {
-    const antLoss = Math.round((10 * enemyAttack) / playerDefence);
+    console.log("Your defences pushed them back!");
+  } else {
+    const { enemyAttack, playerDefence } = calculateCombatStats();
+    let antLoss = Math.round((10 * enemyAttack) / playerDefence);
 
-    // if (
-    //   gameState.playerAntHill.ants.guards > 0 &&
-    //   gameState.playerAntHill.ants.warriors > 0
-    // ) {
-    //   if (Math.random() < 0.5) gameState.playerAntHill.ants.guards -= 1;
-    // } else {
-    //   gameState.playerAntHill.ants.warriors -= 1;
+    console.log(antLoss + 1 + " ants were killed!");
 
-    //   else {gameState.playerAntHill.ants.workers -=1;
-    //   }
+    while (antLoss > 0) {
+      if (
+        gameState.playerAntHill.ants.guards > 0 &&
+        gameState.playerAntHill.ants.warriors > 0
+      ) {
+        if (Math.random() < 0.5) {
+          gameState.playerAntHill.ants.guards -= 1;
+          antLoss -= 1;
+        } else {
+          gameState.playerAntHill.ants.warriors -= 1;
+        }
+      } else if (gameState.playerAntHill.ants.guards > 0) {
+        gameState.playerAntHill.ants.guards -= 1;
 
-    console.log("The Enemy has raided!");
+        antLoss -= 1;
+      } else if (gameState.playerAntHill.ants.warriors > 0) {
+        gameState.playerAntHill.ants.warriors -= 1;
+
+        antLoss -= 1;
+      } else {
+        gameState.playerAntHill.ants.workers -= 1;
+
+        antLoss -= 1;
+      }
+
+      updateResourceStats();
+    }
+  }
+}
+
+function hatchGuard() {
+  if (gameState.playerAntHill.resources.eggs >= 1) {
+    gameState.playerAntHill.ants.guards+= 1;
+    gameState.playerAntHill.resources.eggs-= 1;
+
+    console.log("A Guard was hatched!");
+
+    updateResourceStats();
+  } else {
+    console.log("No eggs available!");
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
-  startTimer();
-  calculateStats();
+
+  const hatchGuardButton = document.getElementById("hatchGuard");
+  hatchGuardButton.addEventListener("click", hatchGuard, { once: true });
 });
 
 //         const loss = Math.round(10 * enemyAttack / playerDefence);
