@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <audio id="hatchingSound" src="audio/Hatch.wav"></audio>
+    <audio id="negative" src="audio/Negative.wav"></audio>
+    <audio id="enemyRaid" src="audio/Enemy raid.wav"></audio>
+    <audio id="raidSuccess" src="audio/Raid Success.wav"></audio>
+    <audio id="raidFailed" src="audio/Raid Failed.wav"></audio>
     <h1></h1>
 
     <div>
@@ -15,29 +20,35 @@
 
     <div id="buttons">
       <button id="hatchGuard" onclick="hatchGuard()">Hatch Guard</button>
+      <button id="hatchWarrior"  onclick="hatchWarrior()">Hatch Warrior</button>
+      <button id="hatchWorker"  onclick="hatchWorker()">Hatch Worker</button>
+      <button id="raidEnemy"  onclick="raidEnemy()">Raid Enemy</button>
+
       <button onclick="saveGame()">Save Game</button>
       <button onclick="loadGame()">Load Game</button>
       <button onclick="nameOfFunction()">My New Button</button>
     </div>
+
+    
+    
 
     <h2>
       <p>Timer</p>
       <span id="gameTimer">0</span>
     </h2>
 
-
-  
-
     <div id="playerStats">
       <h2>Your Ant Hill</h2>
-      <p>Food: <span id="foodCount">0</span>
+      <p>Food: <span id="foodCount">0</span></p>
       <p>Eggs: <span id="eggCount">0</span></p>
       <p>Workers: <span id="workerCount">0</span></p>
       <p>Warriors: <span id="warriorCount">0</span></p>
       <p>Guards: <span id="guardCount">0</span></p>
-      <p>Player defence: <span id="playerDefence">0</span></p>
+      <p>Player Attack: <span id="playerAttack">0</span></p>
+      <p>Player Defence: <span id="playerDefence">0</span></p>
       <p>Enemy: <span id="enemyCount">0</span></p>
       <p>Enemy Attack: <span id="enemyAttack">0</span></p>
+      <p>Enemy Defence: <span id="enemyDefence">0</span></p>
     </div>
 
     <script src="scripts.js"></script>

@@ -1,51 +1,53 @@
-
-
-
 body {
-
-    background-color: #73b6ed;
-    color: white;
-    font-size: 2rem;
-    font-family: 'Courier New', Courier, monospace;
-    display: flex;
-    text-align: center;
-    margin: 10;
-    padding: 20px;
+  background-color: #73b6ed;
+  color: white;
+  font-size: 2rem;
+  font-family: "Courier New", Courier, monospace;
+  display: flex;
+  text-align: center;
+  margin: 10;
+  padding: 20px;
 }
-    
- 
-h1 {
-        font-size: 2rem;
-        margin-bottom: 20px;
 
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 h2 {
-    font-size: 2rem;
-    padding: 20px;
-
+  font-size: 2rem;
+  padding: 20px;
 }
 
-
 button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: rgba(0, 20, 121, 0.103);
-    color: white;
-    border: 5px solid rgba(202, 206, 234, 0.797);
-    border-radius: 20px;
-    margin: 200px;
-    padding: 25px;
-    width: 200px;
-    height: 100px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: rgba(0, 20, 121, 0.103);
+  color: white;
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  margin: 200px;
+  padding: 25px;
+  width: 200px;
+  height: 100px;
+  transition: transform 0.2s ease;
+}
 
-
+button.pop {
+  transform: scale(0.95);
 }
 
 button:hover {
-    background-color: #55dbf366;
-  }
-    
-    
+  background-color: #55dbf366;
+}
+
+button.disable {
+  background-color: rgba(194, 0, 0, 0.262);
+  transform: scale(0.85);
+  pointer-events: none;
   
+  }
+
+
+

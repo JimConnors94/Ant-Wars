@@ -1,7 +1,6 @@
 const defaultGameState = {
-  lastRaidTimer: 0,
-  lastFoodCostTimer: 0,
   gameTimer: 0,
+  raidAvailable: false,
 
   playerAntHill: {
     resources: {
@@ -15,10 +14,7 @@ const defaultGameState = {
       enemy: 35,
     },
   },
-  enemyAntHill: {
-    ants: {
-      enemy: 10,
-    },
+  scores: {
     battleLog: [],
     enemyKilled: 0,
     highestPopulation: 0,
@@ -46,9 +42,12 @@ function updateResourceStats() {
   document.getElementById("enemyCount").textContent =
     gameState.playerAntHill.ants.enemy;
 
-  const { enemyAttack, playerDefence } = calculateCombatStats();
+  const { enemyAttack, enemyDefence, playerAttack, playerDefence } =
+    calculateCombatStats();
   document.getElementById("playerDefence").textContent = playerDefence;
+  document.getElementById("playerAttack").textContent = playerAttack;
   document.getElementById("enemyAttack").textContent = enemyAttack;
+  document.getElementById("enemyDefence").textContent = enemyDefence;
 }
 
 function initializeGameState() {
@@ -63,6 +62,8 @@ function initializeGameState() {
   updateResourceStats();
   calculateCombatStats();
   startTimer();
+  updateRaidButton();
+  updateHatchGuardButton();
 
   console.log(savedState ? "Loaded saved game." : "Starting a new game.");
 }
@@ -97,15 +98,20 @@ function loadGame() {
 function calculateCombatStats() {
   const enemyAttack = gameState.playerAntHill.ants.enemy * 5;
 
+  const enemyDefence = gameState.playerAntHill.ants.enemy * 5;
+
+  const playerAttack =
+    gameState.playerAntHill.ants.guards * 8 +
+    gameState.playerAntHill.ants.warriors * 16 +
+    gameState.playerAntHill.ants.workers * 1;
+
   const playerDefence =
     gameState.playerAntHill.ants.guards * 16 +
     gameState.playerAntHill.ants.warriors * 8 +
     gameState.playerAntHill.ants.workers * 1;
 
-  return { enemyAttack, playerDefence };
+  return { enemyAttack, enemyDefence, playerAttack, playerDefence };
 }
-
-console.log("Stats calculated");
 
 function startTimer() {
   setInterval(() => {
@@ -119,7 +125,7 @@ function startTimer() {
       everyTenSecondEvents();
     }
 
-    if (gameState.gameTimer % 5 === 0) {
+    if (gameState.gameTimer % 30 === 0) {
       everyThirtySecondEvents();
     }
   }, 1000);
@@ -137,10 +143,11 @@ function everySecondEvents() {
     gameState.playerAntHill.ants.warriors * 1;
   gameState.playerAntHill.resources.food += foodGathered;
 
-  console.log(foodGathered + 1 + ' food has been gathered');
+  console.log(foodGathered + 1 + " food has been gathered");
 
   updateResourceStats();
   calculateCombatStats();
+  updateHatchGuardButton();
 }
 
 function everyTenSecondEvents() {
@@ -152,7 +159,7 @@ function everyTenSecondEvents() {
 
   updateResourceStats();
 
-  console.log(foodCost + 1 + ' has been consumed');
+  console.log(foodCost + 1 + " food has been consumed");
 }
 
 function everyThirtySecondEvents() {
@@ -164,6 +171,12 @@ function everyThirtySecondEvents() {
     let antLoss = Math.round((10 * enemyAttack) / playerDefence);
 
     console.log(antLoss + 1 + " ants were killed!");
+
+    const enemyRaidSound = document.getElementById("enemyRaid");
+    if (enemyRaidSound) {
+      enemyRaidSound.currentTime = 0;
+      enemyRaidSound.play();
+    }
 
     while (antLoss > 0) {
       if (
@@ -193,26 +206,167 @@ function everyThirtySecondEvents() {
       updateResourceStats();
     }
   }
+
+  if (!gameState.raidAvailable) {
+    gameState.raidAvailable = true;
+    console.log("Raiding is now available!");
+    updateRaidButton();
+  }
 }
 
 function hatchGuard() {
   if (gameState.playerAntHill.resources.eggs >= 1) {
-    gameState.playerAntHill.ants.guards+= 1;
-    gameState.playerAntHill.resources.eggs-= 1;
+    gameState.playerAntHill.ants.guards += 1;
+    gameState.playerAntHill.resources.eggs -= 1;
+    const hatchSound = document.getElementById("hatchingSound");
+    if (hatchSound) {
+      hatchSound.currentTime = 0;
+      hatchSound.play();
 
-    console.log("A Guard was hatched!");
+      console.log("A Guard was hatched!");
 
-    updateResourceStats();
+      updateResourceStats();
+      updateHatchGuardButton();
+    }
   } else {
     console.log("No eggs available!");
+    const negativeSound = document.getElementById("negative");
+    if (negativeSound) {
+      negativeSound.currentTime = 0;
+      negativeSound.play();
+    }
+  }
+}
+function hatchWarrior() {
+  if (gameState.playerAntHill.resources.eggs >= 1) {
+    gameState.playerAntHill.ants.warriors += 1;
+    gameState.playerAntHill.resources.eggs -= 1;
+    const hatchSound = document.getElementById("hatchingSound");
+    if (hatchSound) {
+      hatchSound.currentTime = 0;
+      hatchSound.play();
+
+      console.log("A Warrior was hatched!");
+
+      updateResourceStats();
+    }
+  } else {
+    console.log("No eggs available!");
+    const negativeSound = document.getElementById("negative");
+    if (negativeSound) {
+      negativeSound.currentTime = 0;
+      negativeSound.play();
+    }
+  }
+}
+
+function hatchWorker() {
+  if (gameState.playerAntHill.resources.eggs >= 1) {
+    gameState.playerAntHill.ants.workers += 1;
+    gameState.playerAntHill.resources.eggs -= 1;
+    const hatchSound = document.getElementById("hatchingSound");
+    if (hatchSound) {
+      hatchSound.currentTime = 0;
+      hatchSound.play();
+
+      console.log("A Worker was hatched!");
+
+      updateResourceStats();
+    }
+  } else {
+    console.log("No eggs available!");
+  }
+}
+
+function raidEnemy() {
+  if (gameState.raidAvailable) {
+    if (Math.random() < 0.5) {
+      console.log("Your attack was repelled!");
+      const raidFailedSound = document.getElementById("raidFailed");
+      if (raidFailedSound) {
+        raidFailedSound.currentTime = 0;
+        raidFailedSound.play();
+      }
+    } else {
+      const { playerAttack, enemyDefence } = calculateCombatStats();
+      let enemyLoss = Math.round((10 * playerAttack) / enemyDefence);
+
+      console.log(enemyLoss + 1 + " enemy ants were killed!");
+
+      const raidSound = document.getElementById("raidSuccess");
+      if (raidSound) {
+        raidSound.currentTime = 0;
+        raidSound.play();
+      }
+
+      while (enemyLoss > 0 && gameState.playerAntHill.ants.enemy > 0) {
+        gameState.playerAntHill.ants.enemy -= 1;
+        enemyLoss -= 1;
+      }
+    }
+
+    gameState.raidAvailable = false;
+    updateRaidButton();
+
+
+
+    
+  } else {
+    console.log("Raiding is not available yet!");
+    const negativeSound = document.getElementById("negative");
+    if (negativeSound) {
+      negativeSound.currentTime = 0;
+      negativeSound.play();
+    }
+  }
+}
+
+function updateRaidButton() {
+  const raidButton = document.getElementById("raidEnemy");
+
+  if (gameState.raidAvailable) {
+    raidButton.classList.remove("disable");
+    raidButton.disabled = false;
+  } else {
+    raidButton.classList.add("disable");
+    raidButton.disabled = true;
+  }
+}
+
+function updateHatchGuardButton() {
+  const hatchGuardButton = document.getElementById("hatchGuard");
+
+  if (gameState.playerAntHill.resources.eggs === 0) {
+    hatchGuardButton.classList.add("disable");
+    hatchGuardButton.disable = true;
+  } else {
+    hatchGuardButton.classList.remove("disable");
+    hatchGuardButton.disable = false;
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
 
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.classList.add("pop");
+      setTimeout(() => button.classList.remove("pop"), 200);
+    });
+  });
+
   const hatchGuardButton = document.getElementById("hatchGuard");
-  hatchGuardButton.addEventListener("click", hatchGuard, { once: true });
+  hatchGuardButton.addEventListener("click", hatchGuard);
+
+  const hatchWarriorButton = document.getElementById("hatchWarrior");
+  hatchWarriorButton.addEventListener("click", hatchWarrior);
+
+  const hatchWorkerButton = document.getElementById("hatchWorker");
+  hatchWorkerButton.addEventListener("click", hatchWorker);
+
+  const raidEnemyButton = document.getElementById("raidEnemy");
+  raidEnemyButton.addEventListener("click", raidEnemy);
 });
 
 //         const loss = Math.round(10 * enemyAttack / playerDefence);
