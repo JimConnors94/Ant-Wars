@@ -63,7 +63,6 @@ function initializeGameState() {
   calculateCombatStats();
   startTimer();
   updateRaidButton();
-  updateHatchGuardButton();
 
   console.log(savedState ? "Loaded saved game." : "Starting a new game.");
 }
@@ -148,6 +147,8 @@ function everySecondEvents() {
   updateResourceStats();
   calculateCombatStats();
   updateHatchGuardButton();
+  updateHatchWarriorButton();
+  updateHatchWorkerButton();
 }
 
 function everyTenSecondEvents() {
@@ -214,49 +215,46 @@ function everyThirtySecondEvents() {
   }
 }
 
+function playSound(sound) {
+  // if there's no sound, return early
+  // effectively ending the function from carrying on
+  // this can be used in place of your if statements, eg. if (hatchSound)...
+  if (!sound) {
+    return;
+  }
+
+  // and then all of your sounds are handled the same:
+  sound.currentTime = 0;
+  sound.play();
+}
+
 function hatchGuard() {
   if (gameState.playerAntHill.resources.eggs >= 1) {
     gameState.playerAntHill.ants.guards += 1;
     gameState.playerAntHill.resources.eggs -= 1;
-    const hatchSound = document.getElementById("hatchingSound");
-    if (hatchSound) {
-      hatchSound.currentTime = 0;
-      hatchSound.play();
+    playSound(hatchingSound);
 
-      console.log("A Guard was hatched!");
+    console.log("A Guard was hatched!");
 
-      updateResourceStats();
-      updateHatchGuardButton();
-    }
+    updateResourceStats();
+    updateHatchGuardButton();
   } else {
     console.log("No eggs available!");
-    const negativeSound = document.getElementById("negative");
-    if (negativeSound) {
-      negativeSound.currentTime = 0;
-      negativeSound.play();
-    }
   }
 }
+
 function hatchWarrior() {
   if (gameState.playerAntHill.resources.eggs >= 1) {
     gameState.playerAntHill.ants.warriors += 1;
     gameState.playerAntHill.resources.eggs -= 1;
-    const hatchSound = document.getElementById("hatchingSound");
-    if (hatchSound) {
-      hatchSound.currentTime = 0;
-      hatchSound.play();
+    playSound(hatchingSound);
 
-      console.log("A Warrior was hatched!");
+    console.log("A Warrior was hatched!");
 
-      updateResourceStats();
-    }
+    updateResourceStats();
+    updateHatchWarriorButton();
   } else {
     console.log("No eggs available!");
-    const negativeSound = document.getElementById("negative");
-    if (negativeSound) {
-      negativeSound.currentTime = 0;
-      negativeSound.play();
-    }
   }
 }
 
@@ -264,15 +262,17 @@ function hatchWorker() {
   if (gameState.playerAntHill.resources.eggs >= 1) {
     gameState.playerAntHill.ants.workers += 1;
     gameState.playerAntHill.resources.eggs -= 1;
-    const hatchSound = document.getElementById("hatchingSound");
+
+    playSound(hatchingSound);
+    /* const hatchSound = document.getElementById("hatchingSound");
     if (hatchSound) {
       hatchSound.currentTime = 0;
-      hatchSound.play();
+      hatchSound.play(); */
 
-      console.log("A Worker was hatched!");
+    console.log("A Worker was hatched!");
 
-      updateResourceStats();
-    }
+    updateResourceStats();
+    updateHatchWorkerButton();
   } else {
     console.log("No eggs available!");
   }
@@ -282,22 +282,11 @@ function raidEnemy() {
   if (gameState.raidAvailable) {
     if (Math.random() < 0.5) {
       console.log("Your attack was repelled!");
-      const raidFailedSound = document.getElementById("raidFailed");
-      if (raidFailedSound) {
-        raidFailedSound.currentTime = 0;
-        raidFailedSound.play();
-      }
     } else {
       const { playerAttack, enemyDefence } = calculateCombatStats();
       let enemyLoss = Math.round((10 * playerAttack) / enemyDefence);
 
       console.log(enemyLoss + 1 + " enemy ants were killed!");
-
-      const raidSound = document.getElementById("raidSuccess");
-      if (raidSound) {
-        raidSound.currentTime = 0;
-        raidSound.play();
-      }
 
       while (enemyLoss > 0 && gameState.playerAntHill.ants.enemy > 0) {
         gameState.playerAntHill.ants.enemy -= 1;
@@ -307,17 +296,10 @@ function raidEnemy() {
 
     gameState.raidAvailable = false;
     updateRaidButton();
-
-
-
-    
+    playSound(raidSuccess);
   } else {
     console.log("Raiding is not available yet!");
-    const negativeSound = document.getElementById("negative");
-    if (negativeSound) {
-      negativeSound.currentTime = 0;
-      negativeSound.play();
-    }
+    playSound(raidFailed);
   }
 }
 
@@ -345,6 +327,30 @@ function updateHatchGuardButton() {
   }
 }
 
+function updateHatchWarriorButton() {
+  const hatchWarriorButton = document.getElementById("hatchWarrior");
+
+  if (gameState.playerAntHill.resources.eggs === 0) {
+    hatchWarriorButton.classList.add("disable");
+    hatchWarriorButton.disable = true;
+  } else {
+    hatchWarriorButton.classList.remove("disable");
+    hatchWarriorButton.disable = false;
+  }
+}
+
+function updateHatchWorkerButton() {
+  const hatchWorkerButton = document.getElementById("hatchWorker");
+
+  if (gameState.playerAntHill.resources.eggs === 0) {
+    hatchWorkerButton.classList.add("disable");
+    hatchWorkerButton.disable = true;
+  } else {
+    hatchWorkerButton.classList.remove("disable");
+    hatchWorkerButton.disable = false;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
 
@@ -367,6 +373,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const raidEnemyButton = document.getElementById("raidEnemy");
   raidEnemyButton.addEventListener("click", raidEnemy);
+
+  const hatchingSound = document.getElementById("hatchingSound");
+  
+
+  const raidSuccess = document.getElementById("raidSuccess");
+  
+
+  const raidFailed = document.getElementById("raidFailed");
+  
 });
 
 //         const loss = Math.round(10 * enemyAttack / playerDefence);
