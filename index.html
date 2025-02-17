@@ -13,43 +13,81 @@
     <audio id="raidSuccess" src="audio/Raid Success.wav"></audio>
     <audio id="raidFailed" src="audio/Raid Failed.wav"></audio>
     <h1></h1>
+    <dom>
+      <div class="left-panel">
+        <div class="logo">
+          <img src="img/ANTWARS.png" alt="Antwars title" ; />
+        </div>
 
-    <div>
-      <img src="img/ANTWARS.png" alt="Antwars title" ; />
-    </div>
+        <div id="buttons">
+          <button id="hatchGuard">Hatch Guard</button>
+          <button id="hatchWarrior">Hatch Warrior</button>
+          <button id="hatchWorker">Hatch Worker</button>
+          <button id="raidEnemy">Raid Enemy</button>
+        </div>
 
-    <div id="buttons">
-      <button id="hatchGuard">Hatch Guard</button>
-      <button id="hatchWarrior">Hatch Warrior</button>
-      <button id="hatchWorker">Hatch Worker</button>
-      <button id="raidEnemy">Raid Enemy</button>
+        <div id="logArea"></div>
+      </div>
 
-      <button onclick="saveGame()">Save Game</button>
-      <button onclick="loadGame()">Load Game</button>
-      <button onclick="nameOfFunction()">My New Button</button>
-    </div>
+      <div class="center-panel">
+        <div class="timer">
+          <p>Timer</p>
+          <span id="gameTimer">0</span>
+        </div>
+        
 
-    
-    
+        <div class="upper-center">
+          <div class="stat-panel">
+            <p>Player Attack: <span id="playerAttack">0</span></p>
+            <p>Player Defence: <span id="playerDefence">0</span></p>
+          </div>
 
-    <h2>
-      <p>Timer</p>
-      <span id="gameTimer">0</span>
-    </h2>
+          <div class="resource-panel">
+            <p>Food: <span id="foodCount">0</span></p>
+            <p>Eggs: <span id="eggCount">0</span></p>
+          </div>
+        </div>
 
-    <div id="playerStats">
-      <h2>Your Ant Hill</h2>
-      <p>Food: <span id="foodCount">0</span></p>
-      <p>Eggs: <span id="eggCount">0</span></p>
-      <p>Workers: <span id="workerCount">0</span></p>
-      <p>Warriors: <span id="warriorCount">0</span></p>
-      <p>Guards: <span id="guardCount">0</span></p>
-      <p>Player Attack: <span id="playerAttack">0</span></p>
-      <p>Player Defence: <span id="playerDefence">0</span></p>
-      <p>Enemy: <span id="enemyCount">0</span></p>
-      <p>Enemy Attack: <span id="enemyAttack">0</span></p>
-      <p>Enemy Defence: <span id="enemyDefence">0</span></p>
-    </div>
+        <div class="population-panel">
+          <p>Guards: <span id="guardCount">0</span></p>
+          <p>Workers: <span id="workerCount">0</span></p>
+          <p>Warriors: <span id="warriorCount">0</span></p>
+        </div>
+      </div>
+
+      <div class="right-panel">
+
+        <button onclick="openRules()">Game Rules</button>
+
+        <div id="rulesPopup" class="popup">
+  
+          <p>To win you must eliminate your enemy before their population reaches 999</p>
+          <p>Worker ants excel at gathering food, but add little to the colonies defensive or offensive capabilities.</p>
+          <p>Warrior and guard ants eat far more food than they gather, but are needed to increase your stats.</p>
+          <p>Warriors specialize in attack, while Guards specialize in defence.</p>
+          <p>Hatch the right balance of ants to succeed.</p>
+          <p>If your run out of food, your ants will starve.</p>
+          <p>Every 30 seconds your enemy will attempt to raid you and kill your ants.</p>
+          <p>After an enemy attempts a raid, you'll be able to strike back.</p>
+
+
+
+  
+          <button onclick="closeRules()">Close</button>
+  
+      </div>
+        
+        <p>Enemy: <span id="enemyCount">0</span></p>
+        <p>Enemy Attack: <span id="enemyAttack">0</span></p>
+        <p>Enemy Defence: <span id="enemyDefence">0</span></p>
+      </div>
+
+      <!-- 
+        <button onclick="saveGame()">Save Game</button>
+        <button onclick="loadGame()">Load Game</button>
+        <button onclick="nameOfFunction()">My New Button</button>
+      </div> -->
+    </dom>
 
     <script src="scripts.js"></script>
   </body>
