@@ -4,14 +4,20 @@ body {
   font-size: 2rem;
   font-family: "Courier New", Courier, monospace;
   display: flex;
+  flex-direction: row;
   text-align: center;
-  margin: 10;
-  padding: 20px;
+  width: 100%;
 }
 
-dom {
+.container {
   display: flex;
-  flex-direction: row;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.icon {
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
 }
 
 .left-panel,
@@ -23,13 +29,16 @@ dom {
   border-radius: 20px;
   padding: 20px;
   margin: 20px;
+  min-width: 200px; /* ensures the div doesn’t shrink below this width */
+  max-width: 500px; /* allows some flexibility but prevents excessive growth */
 }
 
 .center-panel {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  margin: 20px;
+  min-width: 200px; /* ensures the div doesn’t shrink below this width */
+  max-width: 500px; /* allows some flexibility but prevents excessive growth */
 }
 
 .timer {
@@ -142,25 +151,14 @@ button.disable {
 
 .popup {
   display: none;
-
   position: fixed;
-
-  flex-direction: column;
-
-  z-index: 1;
-
   left: 0;
-
   top: 0;
-
+  flex-direction: column;
   width: 100%;
-
   height: 100%;
-
   background-color: rgba(0, 0, 0, 0.5);
-
   align-items: center;
-
   justify-content: center;
 }
 
@@ -171,3 +169,38 @@ button.disable {
 
   border-radius: 5px;
 }
+
+#eventPopup .popup-content {
+  background-color: rgba(0, 15, 92, 0.242);
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  padding: 20px;
+  width: 50%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+#dialogue-options {
+  gap: 10px; 
+ 
+  
+}
+
+#dialogue-name {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 3rem;
+}
+
+#dialogue-options button {
+  width: 50%;
+  font-size: 1.2rem;
+  background-color: #1d1437;
+  
+}
+
+#dialogue-options button:hover {
+  background-color: #ae1a00;
+}
+
+

@@ -2,19 +2,23 @@ let isTimerRunning = true;
 let timerInterval;
 
 const defaultGameState = {
-  gameTimer: 27,
+  gameTimer: 0,
   raidAvailable: false,
+  spiderInCamp: false,
+  encounteredCharacters: [],
 
   playerAntHill: {
     resources: {
       eggs: 0,
+      sticks: 0,
       food: 0,
+      shinyRocks: 0,
     },
     ants: {
-      workers: 77,
-      warriors: 25,
-      guards: 25,
-      enemy: 1,
+      workers: 15,
+      warriors: 10,
+      guards: 10,
+      enemy: 50,
     },
   },
   scores: {
@@ -24,11 +28,306 @@ const defaultGameState = {
   },
 };
 
-let gameState = {};
+const characters = [
+  {
+    name: "Angoliant the Terrible",
+    icon: "img/spider.png",
+    music: "audio/spiderMusic.wav",
+    text: "While out on patrol, a troop of 10 warrior ants encounter a terrifying beast of a spider! They cower in fear, waiting for the monster to rip them apart... But it appears the spider wishes to speak?",
+    responses: [
+      {
+        text: "What do you want with us, spider?",
+        next: {
+          name: "Angoliant the Terrible",
+          icon: "img/spider.png",
+          text: "Greetings, small tasty one! No no! Do not run! For an offer Angoliant has...",
+          responses: [
+            {
+              text: "What is your offer?",
+              next: {
+                name: "Angoliant the Terrible",
+                icon: "img/spider.png",
+                text: "Your kind is so tasty, but chasing you down is tiresome. Angoliant understands you are at war, Angoliant can provide you with power that would be... indispensable for your war effort... All Angoliant asks for in return, is but for a few of your worthy selves to sacrifice themselves, to the greater good of your colony...",
+                responses: [
+                  {
+                    text: "By sacrifice, you mean you expect us to let you eat us?!",
+                    next: {
+                      name: "Angoliant the Terrible",
+                      icon: "img/spider.png",
+                      text: "Ah, you understand perfectly. Wonderful. Yes, Angoliant will give you the tools to destroy your Enemy, and in return, some of you will sacrifice your delicious flesh to Angoliant. Believe what Angoliant says, for with Angoliant's power, many more of your puny lives will be saved from this war.",
+                      responses: [
+                        {
+                          text: "We Ants would never agree to such a hideous deal! Ants do not fear death, but we will never die without honor!",
+                          next: {
+                            name: "Angoliant the Terrible",
+                            icon: "img/spider.png",
+                            text: "Foolish Ants... Die with your honor then! Prepare yourselves...",
+                            responses: [
+                              {
+                                text: "Stand your ground! We fight to the last ant!",
+                                action: spiderAttack,
+                              },
+                            ],
+                          },
+                        },
+                        {
+                          text: "You ask for far too much, Angoliant... but compared to the war with the Enemy... even you are the lesser of two evils. The Ants will accept your evil bargain.",
+                          next: {
+                            name: "Angoliant the Terrible",
+                            icon: "img/spider.png",
+                            text: "Yessssss... good, good... Angoliant will tell you the location of Angoliant's secret lair. When you are ready, come to Angoliant with your sacrifices! Hahahahaha!",
+                            responses: [
+                              {
+                                text: "We will do what must be done... for the colony.",
+                                action: spiderInCamp,
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    text: "I don't like where this is going... Ants! Attack!",
+                    next: {
+                      name: "Angoliant the Terrible",
+                      icon: "img/spider.png",
+                      text: "Then so be it. Angoliant has more fun this way anyways!",
+                      responses: [
+                        {
+                          text: "Charge!",
+                          action: spiderAttack,
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              text: "We don't trust you! And we would rather die fighting!",
+              next: {
+                name: "Angoliant the Terrible",
+                icon: "img/spider.png",
+                text: "Fools. You die pointlessly.",
+                responses: [
+                  {
+                    text: "Then we die as warriors!",
+                    action: spiderAttack,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+      {
+        text: "We do not fear you, foul beast! Everyone attack!",
+        next: {
+          name: "Angoliant the Terrible",
+          icon: "img/spider.png",
+          text: "Brave but foolish. None can stand against Angoliant.",
+          responses: [
+            {
+              text: "To battle!",
+              action: spiderAttack,
+            },
+          ],
+        },
+      },
+      {
+        text: "S-s-s-SPIDER! RUN!",
+        next: {
+          name: "Angoliant the Terrible",
+          icon: "img/spider.png",
+          text: "Cowards! No one escapes from Angoliant!",
+          responses: [
+            {
+              text: "Scatter!",
+              action: spiderAttack,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    name: "Heracles the Mighty",
+    icon: "img/beetle.png",
+    music: "audio/beetleMusic.wav",
+    text: "A large, muscular beetle approaches the ant hill... He says he wishes to speak to the queen...",
+    responses: [
+      {
+        text: "What do you want with our Queen?",
+        next: {
+          name: "Heracles the Mighty",
+          icon: "img/beetle.png",
+          text: "Hello friend! Allow me to introduce myself! Professionally I am known as 'The World's Strongest Beetle In The Entire World'! But you can just call me Heracles: 'The Mightiest One'!",
+          responses: [
+            {
+              text: "Uh huh...",
+              next: {
+                name: "Heracles the Mighty",
+                icon: "img/beetle.png",
+                text: "Anyways... To become even stronger, I need protein! Ant eggs are so legendary full of protein, I believe they can give even more amazing muscles! So I will trade your Queen many sticks for her eggs!",
+                responses: [
+                  {
+                    text: "What? That's so messed up! Our eggs aren't for sale! No way! Get outta here now!",
+                    next: {
+                      name: "Heracles the Mighty",
+                      icon: "img/beetle.png",
+                      text: "I-is that s-so... b-but what about my... my gains!!! Wahhhh!",
+                      responses: [
+                        {
+                          text: "That's right, scram!",
+                          action: heraclesCrying,
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    text: "Sticks you say? I think an arrangement could be made...",
+                    next: {
+                      name: "Heracles the Mighty",
+                      icon: "img/beetle.png",
+                      text: "Hurrah! I will be working out over here! Bring me all the eggs you can!",
+                      responses: [
+                        {
+                          text: "Alright, deal.",
+                          action: heraclesInCamp,
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+function openSpecialEvent() {
+  if (Math.random() < 0.5) {
+    const availableCharacters = characters.filter(
+      (char) => !gameState.encounteredCharacters.includes(char.name)
+    );
+
+    if (availableCharacters.length > 0) {
+      const randomChar =
+        availableCharacters[
+          Math.floor(Math.random() * availableCharacters.length)
+        ];
+      gameState.encounteredCharacters.push(randomChar.name);
+
+      const eventPopup = document.getElementById("eventPopup");
+      const dialogueName = document.getElementById("dialogue-name");
+      const dialogueText = document.getElementById("dialogue-text");
+      const dialogueOptions = document.getElementById("dialogue-options");
+      const characterIcon = document.getElementById("characterIcon"); // Get the icon element
+
+      // Function to display dialogue and options
+      const displayDialogue = (dialogue) => {
+        dialogueName.textContent = dialogue.name;
+        dialogueText.textContent = dialogue.text;
+
+        // Update the character icon
+        characterIcon.src = dialogue.icon; // Set the src attribute
+        characterIcon.alt = `${dialogue.name} icon`; // Update the alt text
+
+        dialogueOptions.innerHTML = "";
+
+        if (dialogue.responses) {
+          dialogue.responses.forEach((response) => {
+            const button = document.createElement("button");
+            button.textContent = response.text;
+            button.addEventListener("click", () => {
+              if (response.action) {
+                response.action();
+                setTimeout(() => {
+                  closeSpecialEvent();
+                }, 500);
+              } else if (response.next) {
+                displayDialogue(response.next);
+              } else {
+                closeSpecialEvent();
+              }
+            });
+            dialogueOptions.appendChild(button);
+          });
+        }
+      };
+
+      // Start the dialogue
+      displayDialogue(randomChar);
+
+      eventPopup.style.display = "flex";
+      pauseTimer();
+      playSound(randomChar.music);
+    }
+  }
+}
+
+function closeSpecialEvent() {
+  const eventPopup = document.getElementById("eventPopup");
+  eventPopup.style.display = "none";
+  resumeTimer();
+}
+
+function tradeEggsForSticks() {
+  if (gameState.playerAntHill.resources.eggs >= 1) {
+    gameState.playerAntHill.resources.eggs -= 1;
+    gameState.playerAntHill.resources.sticks += 10;
+    addToLog("You traded an egg for 10 sticks.");
+  } else {
+    addToLog("Not enough eggs to trade.");
+  }
+  updateResourceStats();
+}
+
+function spiderAttack() {
+  gameState.playerAntHill.ants.warriors -= 10;
+  if (gameState.playerAntHill.ants.warriors < 0) {
+    gameState.playerAntHill.ants.warriors = 0;
+  }
+  updateResourceStats();
+  addToLog("In only a fraction of a second, Angoliant ripped apart and ate all 10 of the warrior ants!");
+  document.getElementById("workerCount").textContent =
+    gameState.playerAntHill.ants.workers;
+  closeSpecialEvent();
+}
+
+function heraclesCrying() {
+  gameState.playerAntHill.resources.sticks += 10;
+
+  addToLog("Heracles ran away crying... But he dropped some sticks!");
+  closeSpecialEvent();
+}
+
+function spiderInCamp() {
+  addToLog(
+    "We may have made a deal with the devil today... But if it gives us the power to crush the Enemy, then so be it."
+  );
+  if (!gameState.spiderInCamp) {
+    gameState.spiderInCamp = true;
+    closeSpecialEvent();
+  }
+}
+function heraclesInCamp() {
+  if (!gameState.heraclesInCamp) {
+    gameState.heraclesInCamp = true;
+    closeSpecialEvent();
+  }
+}
 
 function updateResourceStats() {
   document.getElementById("eggCount").textContent =
     gameState.playerAntHill.resources.eggs;
+
+  document.getElementById("stickCount").textContent =
+    gameState.playerAntHill.resources.sticks;
 
   document.getElementById("foodCount").textContent =
     gameState.playerAntHill.resources.food;
@@ -125,7 +424,8 @@ function calculateCombatStats() {
 }
 
 function startTimer() {
-  if (isTimerRunning) {
+  if (!timerInterval) {
+    // Prevent multiple intervals from being created
     timerInterval = setInterval(() => {
       gameState.gameTimer += 1;
       document.getElementById("gameTimer").innerText = gameState.gameTimer;
@@ -157,12 +457,16 @@ function everySecondEvents() {
 
   console.log(foodGathered + 1 + " food has been gathered");
 
+  openSpecialEvent();
   updateResourceStats();
   calculateCombatStats();
   updateHatchGuardButton();
   updateHatchWarriorButton();
   updateHatchWorkerButton();
+  checkVictory();
+  checkDefeat();
 }
+
 function checkVictory() {
   if (gameState.playerAntHill.ants.enemy <= 0) {
     triggerVictory();
@@ -193,6 +497,11 @@ function triggerDefeat() {
 }
 
 function everyTenSecondEvents() {
+  const sticksGathered = gameState.playerAntHill.ants.workers * 1;
+
+  gameState.playerAntHill.resources.sticks += sticksGathered;
+
+  console.log(sticksGathered + 1 + " sticks has been gathered");
   const foodCost =
     gameState.playerAntHill.ants.workers * 10 +
     gameState.playerAntHill.ants.guards * 80 +
@@ -257,8 +566,6 @@ function everyTenSecondEvents() {
   }
 
   updateResourceStats();
-  checkVictory();
-  checkDefeat();
 
   console.log(foodCost + 1 + " food has been consumed");
 }
@@ -303,8 +610,6 @@ function everyThirtySecondEvents() {
       }
 
       updateResourceStats();
-      checkVictory();
-      checkDefeat();
     }
   }
 
@@ -326,11 +631,11 @@ function playSound(sound) {
 function pauseTimer() {
   if (isTimerRunning) {
     clearInterval(timerInterval);
+    timerInterval = null;
     isTimerRunning = false;
     console.log("Timer Paused");
   }
 }
-
 function resumeTimer() {
   if (!isTimerRunning) {
     isTimerRunning = true;
@@ -419,8 +724,6 @@ function raidEnemy() {
     gameState.raidAvailable = false;
     updateRaidButton();
     playSound(raidSuccess);
-    checkVictory();
-    checkDefeat();
   } else {
     console.log("Raiding is not available yet!");
   }
