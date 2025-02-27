@@ -27,7 +27,14 @@
         </div>
 
         <div id="logArea"></div>
+
+        <div>
+          <button onclick="openShop()">Open Shop</button>
+        </div>
+
       </div>
+
+     
 
       <div class="center-panel">
         <div class="timer">
@@ -58,32 +65,7 @@
       <div class="right-panel">
         <button onclick="openRules()">Game Rules</button>
 
-        <div id="rulesPopup" class="popup">
-          <p>
-            To win you must eliminate your enemy before their population reaches
-            999
-          </p>
-          <p>
-            Worker ants excel at gathering food, but add little to the colonies
-            defensive or offensive capabilities.
-          </p>
-          <p>
-            Warrior and guard ants eat far more food than they gather, but are
-            needed to increase your stats.
-          </p>
-          <p>
-            Warriors specialize in attack, while Guards specialize in defence.
-          </p>
-          <p>Hatch the right balance of ants to succeed.</p>
-          <p>If your run out of food, your ants will starve.</p>
-          <p>
-            Every 30 seconds your enemy will attempt to raid you and kill your
-            ants.
-          </p>
-          <p>After an enemy attempts a raid, you'll be able to strike back.</p>
-
-          <button onclick="closeRules()">Close</button>
-        </div>
+        
 
         <p>Enemy: <span id="enemyCount">0</span></p>
         <p>Enemy Attack: <span id="enemyAttack">0</span></p>
@@ -94,11 +76,49 @@
         <div class="popup-content">
           <div id="characterDialogue">
             <p id="dialogue-name"></p>
-            <img src="img/" class="icon" id="characterIcon" alt="characterIcon" />
+            <img
+              src="img/"
+              class="icon"
+              id="characterIcon"
+              alt="characterIcon"
+            />
             <p id="dialogue-text"></p>
           </div>
           <div id="dialogue-options"></div>
         </div>
+      </div>
+
+      <div id="shopPopup" class="popup">
+    
+
+        <button onclick="closeShop()">Close</button>
+      </div>
+
+      <div id="rulesPopup" class="popup">
+        <p>
+          To win you must eliminate your enemy before their population reaches
+          999
+        </p>
+        <p>
+          Worker ants excel at gathering food, but add little to the colonies
+          defensive or offensive capabilities.
+        </p>
+        <p>
+          Warrior and guard ants eat far more food than they gather, but are
+          needed to increase your stats.
+        </p>
+        <p>
+          Warriors specialize in attack, while Guards specialize in defence.
+        </p>
+        <p>Hatch the right balance of ants to succeed.</p>
+        <p>If your run out of food, your ants will starve.</p>
+        <p>
+          Every 30 seconds your enemy will attempt to raid you and kill your
+          ants.
+        </p>
+        <p>After an enemy attempts a raid, you'll be able to strike back.</p>
+
+        <button onclick="closeRules()">Close</button>
       </div>
 
       <!-- 

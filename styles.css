@@ -149,6 +149,11 @@ button.disable {
   margin-bottom: 5px;
 }
 
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+}
 .popup {
   display: none;
   position: fixed;
@@ -156,18 +161,10 @@ button.disable {
   top: 0;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   align-items: center;
   justify-content: center;
-}
-
-.popup-content {
-  background-color: white;
-
-  padding: 20px;
-
-  border-radius: 5px;
 }
 
 #eventPopup .popup-content {
@@ -175,32 +172,35 @@ button.disable {
   border: 5px solid rgba(202, 206, 234, 0.797);
   border-radius: 20px;
   padding: 20px;
-  width: 50%;
+  max-width: 33vw;
+  max-height: 75vh;
   text-align: center;
   display: flex;
   flex-direction: column;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #dialogue-options {
-  gap: 10px; 
- 
-  
+  gap: 10px;
+  flex-direction: column;
 }
 
 #dialogue-name {
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   font-size: 3rem;
 }
 
 #dialogue-options button {
-  width: 50%;
-  font-size: 1.2rem;
-  background-color: #1d1437;
+  width: 20vw;
+  height: 20vh;
   
+
+  background-color: #1d1437;
 }
 
 #dialogue-options button:hover {
   background-color: #ae1a00;
 }
-
-

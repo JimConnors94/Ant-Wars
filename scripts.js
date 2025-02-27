@@ -28,6 +28,8 @@ const defaultGameState = {
   },
 };
 
+let gameState = {};
+
 const characters = [
   {
     name: "Angoliant the Terrible",
@@ -359,6 +361,17 @@ function openRules() {
 
 function closeRules() {
   document.getElementById("rulesPopup").style.display = "none";
+  resumeTimer();
+}
+
+function openShop() {
+  document.getElementById("shopPopup").style.display = "flex";
+  pauseTimer();
+}
+
+
+function closeShop() {
+  document.getElementById("shopPopup").style.display = "none";
   resumeTimer();
 }
 function initializeGameState() {
