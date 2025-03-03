@@ -7,17 +7,25 @@ const defaultGameState = {
   spiderInCamp: false,
   encounteredCharacters: [],
 
+  attackLevelOne: false,
+  attackLevelTwo: false,
+  attackLevelThree: false,
+  defenceLevelOne: false,
+  defenceLevelTwo: false,
+  defenceLevelThree: false,
+  spiderVenom: false,
+
   playerAntHill: {
     resources: {
       eggs: 0,
-      sticks: 0,
-      food: 0,
+      sticks: 1000,
+      food: 10000,
       shinyRocks: 0,
     },
     ants: {
-      workers: 15,
-      warriors: 10,
-      guards: 10,
+      workers: 150,
+      warriors: 0,
+      guards: 500,
       enemy: 50,
     },
   },
@@ -211,6 +219,23 @@ const characters = [
   },
 ];
 
+function initializeGameState() {
+  const savedState = localStorage.getItem("antWarsGameState");
+
+  if (savedState) {
+    gameState = JSON.parse(savedState);
+  } else {
+    gameState = JSON.parse(JSON.stringify(defaultGameState));
+  }
+
+  updateResourceStats();
+  calculateCombatStats();
+  updateRaidButton();
+  openMenu();
+
+  console.log(savedState ? "Loaded saved game." : "Starting a new game.");
+}
+
 function openSpecialEvent() {
   if (Math.random() < 0.5) {
     const availableCharacters = characters.filter(
@@ -228,7 +253,7 @@ function openSpecialEvent() {
       const dialogueName = document.getElementById("dialogue-name");
       const dialogueText = document.getElementById("dialogue-text");
       const dialogueOptions = document.getElementById("dialogue-options");
-      const characterIcon = document.getElementById("characterIcon"); // Get the icon element
+      const characterIcon = document.getElementById("characterIcon");
 
       // Function to display dialogue and options
       const displayDialogue = (dialogue) => {
@@ -295,7 +320,9 @@ function spiderAttack() {
     gameState.playerAntHill.ants.warriors = 0;
   }
   updateResourceStats();
-  addToLog("In only a fraction of a second, Angoliant ripped apart and ate all 10 of the warrior ants!");
+  addToLog(
+    "In only a fraction of a second, Angoliant ripped apart and ate all 10 of the warrior ants!"
+  );
   document.getElementById("workerCount").textContent =
     gameState.playerAntHill.ants.workers;
   closeSpecialEvent();
@@ -316,6 +343,18 @@ function spiderInCamp() {
     gameState.spiderInCamp = true;
     closeSpecialEvent();
   }
+}
+
+function openSpider() {
+  if (gameState.spiderInCamp) {
+    document.getElementById("spiderPopup").style.display = "flex";
+  }
+
+  closeShop();
+}
+
+function closeSpider() {
+  document.getElementById("spiderPopup").style.display = "none";
 }
 function heraclesInCamp() {
   if (!gameState.heraclesInCamp) {
@@ -354,41 +393,69 @@ function updateResourceStats() {
   document.getElementById("enemyDefence").textContent = enemyDefence;
 }
 
+function openMenu() {
+  document.getElementById("menuPopup").style.display = "flex";
+  menuButtonOn();
+  pauseTimer();
+}
+
+function closeMenu() {
+  document.getElementById("menuPopup").style.display = "none";
+  menuButtonOff();
+  resumeTimer();
+}
+
 function openRules() {
   document.getElementById("rulesPopup").style.display = "flex";
-  pauseTimer();
 }
 
 function closeRules() {
   document.getElementById("rulesPopup").style.display = "none";
-  resumeTimer();
 }
-
 function openShop() {
   document.getElementById("shopPopup").style.display = "flex";
   pauseTimer();
+  menuButtonOn();
+}
+function openMerchants() {
+  
+
+  document.getElementById("merchantPopup").style.display = "flex";
+
+  const merchantopup = document.getElementById("merchantPopup");
+  merchantPopup.innerHTML = "";
+
+  if (gameState.spiderInCamp) {
+    const spiderButton = document.createElement("button");
+    spiderButton.textContent = "Angoliant the Terrible";
+    spiderButton.onclick = openSpider;
+    merchantPopup.appendChild(spiderButton);
+  }
+
+  if (gameState.heraclesInCamp) {
+    const heraclesButton = document.createElement("button");
+    heraclesButton.textContent = "Heracles the Mighty";
+    heraclesButton.onclick = openHeracles;
+    merchantPopup.appendChild(heraclesButton);
+  }
+
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "Close";
+  closeButton.onclick = closeMerchants;
+  merchantPopup.appendChild(closeButton);
+
+  pauseTimer();
+}
+function closeMerchants() {
+  document.getElementById("merchantPopup").style.display = "none";
+  document.getElementById("shopPopup").style.display = "flex";
 }
 
 
 function closeShop() {
   document.getElementById("shopPopup").style.display = "none";
   resumeTimer();
-}
-function initializeGameState() {
-  const savedState = localStorage.getItem("antWarsGameState");
-
-  if (savedState) {
-    gameState = JSON.parse(savedState);
-  } else {
-    gameState = JSON.parse(JSON.stringify(defaultGameState));
-  }
-
-  updateResourceStats();
-  calculateCombatStats();
-  startTimer();
-  updateRaidButton();
-
-  console.log(savedState ? "Loaded saved game." : "Starting a new game.");
+  menuButtonOff();
 }
 
 function startNewGame() {
@@ -423,17 +490,45 @@ function calculateCombatStats() {
 
   const enemyDefence = gameState.playerAntHill.ants.enemy * 5;
 
-  const playerAttack =
+  let baseAttack =
     gameState.playerAntHill.ants.guards * 8 +
     gameState.playerAntHill.ants.warriors * 16 +
     gameState.playerAntHill.ants.workers * 1;
 
-  const playerDefence =
+  let baseDefence =
     gameState.playerAntHill.ants.guards * 16 +
     gameState.playerAntHill.ants.warriors * 8 +
     gameState.playerAntHill.ants.workers * 1;
 
+  let attackMultiplier = 1;
+  if (gameState.attackLevelOne) attackMultiplier += 0.5;
+  if (gameState.attackLevelTwo) attackMultiplier += 0.5;
+  if (gameState.attackLevelThree) attackMultiplier += 0.5;
+  if (gameState.spiderVenom) attackMultiplier += 0.5;
+
+  let defenceMultiplier = 1;
+  if (gameState.defenceLevelOne) defenceMultiplier += 0.5;
+  if (gameState.defenceLevelTwo) defenceMultiplier += 0.5;
+  if (gameState.defenceLevelThree) defenceMultiplier += 0.5;
+
+  const playerDefence = baseDefence * defenceMultiplier;
+
+  const playerAttack = baseAttack * attackMultiplier;
+
   return { enemyAttack, enemyDefence, playerAttack, playerDefence };
+}
+
+function upgradeAttack() {
+  if (gameState.playerAntHill.resources.sticks >= 100) {
+    gameState.attackLevelOne = true;
+    gameState.playerAntHill.resources.sticks -= 100;
+
+    console.log("Attack increased!");
+
+    calculateCombatStats();
+  } else {
+    console.log("Not enough sticks available!");
+  }
 }
 
 function startTimer() {
@@ -752,6 +847,52 @@ function updateRaidButton() {
     raidButton.classList.add("disable");
     raidButton.disabled = true;
   }
+}
+
+function menuButtonOn() {
+  const hatchGuardButton = document.getElementById("hatchGuard");
+  const hatchWarriorButton = document.getElementById("hatchWarrior");
+  const hatchWorkerButton = document.getElementById("hatchWorker");
+  const menuButton = document.getElementById("menuButton");
+  const shopButton = document.getElementById("shopButton");
+
+  hatchGuardButton.classList.add("disable");
+  hatchGuardButton.disable = true;
+
+  hatchWarriorButton.classList.add("disable");
+  hatchWarriorButton.disable = true;
+
+  hatchWorkerButton.classList.add("disable");
+  hatchWorkerButton.disable = true;
+
+  menuButton.classList.add("disable");
+  menuButton.disable = true;
+
+  shopButton.classList.add("disable");
+  shopButton.disable = true;
+}
+
+function menuButtonOff() {
+  const hatchGuardButton = document.getElementById("hatchGuard");
+  const hatchWarriorButton = document.getElementById("hatchWarrior");
+  const hatchWorkerButton = document.getElementById("hatchWorker");
+  const menuButton = document.getElementById("menuButton");
+  const shopButton = document.getElementById("shopButton");
+
+  hatchGuardButton.classList.remove("disable");
+  hatchGuardButton.disable = false;
+
+  hatchWarriorButton.classList.remove("disable");
+  hatchWarriorButton.disable = false;
+
+  hatchWorkerButton.classList.remove("disable");
+  hatchWorkerButton.disable = false;
+
+  menuButton.classList.remove("disable");
+  menuButton.disable = false;
+
+  shopButton.classList.remove("disable");
+  shopButton.disable = false;
 }
 
 function updateHatchGuardButton() {

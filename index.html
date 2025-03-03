@@ -29,12 +29,9 @@
         <div id="logArea"></div>
 
         <div>
-          <button onclick="openShop()">Open Shop</button>
+          <button id="shopButton" onclick="openShop()">Open Shop</button>
         </div>
-
       </div>
-
-     
 
       <div class="center-panel">
         <div class="timer">
@@ -63,13 +60,19 @@
       </div>
 
       <div class="right-panel">
-        <button onclick="openRules()">Game Rules</button>
-
-        
-
         <p>Enemy: <span id="enemyCount">0</span></p>
         <p>Enemy Attack: <span id="enemyAttack">0</span></p>
         <p>Enemy Defence: <span id="enemyDefence">0</span></p>
+        <button id="menuButton" onclick="openMenu()">Main Menu</button>
+      </div>
+
+      <div id="menuPopup" class="popup">
+        <button onclick="openRules()">Game Rules</button>
+
+        <button onclick="startNewGame()">Start New Game</button>
+        <button onclick="saveGame()">Save Game</button>
+        <button onclick="loadGame()">Load Game</button>
+        <button onclick="closeMenu()">Close</button>
       </div>
 
       <div id="eventPopup" class="popup">
@@ -89,9 +92,20 @@
       </div>
 
       <div id="shopPopup" class="popup">
-    
+
+        <button onclick="openUpgrades()">Upgrades</button>
+        
+  
+
+        <button onclick="upgradeAttack()">Upgrade Attack</button>
+        <button onclick="upgradeDefence()">Upgrade Defence</button>
+        <button onclick="openMerchants()">Merchants</button>
 
         <button onclick="closeShop()">Close</button>
+      </div>
+
+      <div id="merchantPopup" class="popup">
+        
       </div>
 
       <div id="rulesPopup" class="popup">
@@ -121,11 +135,9 @@
         <button onclick="closeRules()">Close</button>
       </div>
 
-      <!-- 
-        <button onclick="saveGame()">Save Game</button>
-        <button onclick="loadGame()">Load Game</button>
-        <button onclick="nameOfFunction()">My New Button</button>
-      </div> -->
+      <div id="spiderPopup" class="popup">
+        <button onclick="closeSpider()">Close</button>
+      </div>
     </div>
 
     <script src="scripts.js"></script>

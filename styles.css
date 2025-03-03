@@ -167,6 +167,86 @@ button.disable {
   justify-content: center;
 }
 
+#rulesPopup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 15, 92, 0.8);
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 33vw;
+  max-height: 75vh;
+  text-align: center;
+  overflow: auto;
+}
+
+#menuPopup {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 15, 92, 0.8);
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 33vw;
+  max-height: 75vh;
+  text-align: center;
+  overflow: auto;
+}
+
+#shopPopup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(0, 15, 92);
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 33vw;
+  max-height: 75vh;
+  text-align: center;
+  overflow: auto;
+}
+
+#merchantPopup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(0, 15, 92);
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 33vw;
+  max-height: 75vh;
+  text-align: center;
+  overflow: auto;
+}
+
+#spiderPopup {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 15, 92, 0.242);
+  border: 5px solid rgba(202, 206, 234, 0.797);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 33vw;
+  max-height: 75vh;
+  text-align: center;
+  overflow: auto;
+}
+
 #eventPopup .popup-content {
   background-color: rgba(0, 15, 92, 0.242);
   border: 5px solid rgba(202, 206, 234, 0.797);
@@ -178,7 +258,6 @@ button.disable {
   display: flex;
   flex-direction: column;
   overflow: scroll;
-  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
@@ -196,7 +275,6 @@ button.disable {
 #dialogue-options button {
   width: 20vw;
   height: 20vh;
-  
 
   background-color: #1d1437;
 }
