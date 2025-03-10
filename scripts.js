@@ -7,12 +7,11 @@ const defaultGameState = {
   spiderInCamp: false,
   encounteredCharacters: [],
 
-  attackLevelOne: false,
-  attackLevelTwo: false,
-  attackLevelThree: false,
-  defenceLevelOne: false,
-  defenceLevelTwo: false,
-  defenceLevelThree: false,
+  attackMultiplier: 1,
+  defenceMultiplier: 1,
+  enemyAttackMultiplier: 1,
+  enemyDefenceMultiplier: 1,
+
   spiderVenom: false,
 
   playerAntHill: {
@@ -38,187 +37,6 @@ const defaultGameState = {
 
 let gameState = {};
 
-const characters = [
-  {
-    name: "Angoliant the Terrible",
-    icon: "img/spider.png",
-    music: "audio/spiderMusic.wav",
-    text: "While out on patrol, a troop of 10 warrior ants encounter a terrifying beast of a spider! They cower in fear, waiting for the monster to rip them apart... But it appears the spider wishes to speak?",
-    responses: [
-      {
-        text: "What do you want with us, spider?",
-        next: {
-          name: "Angoliant the Terrible",
-          icon: "img/spider.png",
-          text: "Greetings, small tasty one! No no! Do not run! For an offer Angoliant has...",
-          responses: [
-            {
-              text: "What is your offer?",
-              next: {
-                name: "Angoliant the Terrible",
-                icon: "img/spider.png",
-                text: "Your kind is so tasty, but chasing you down is tiresome. Angoliant understands you are at war, Angoliant can provide you with power that would be... indispensable for your war effort... All Angoliant asks for in return, is but for a few of your worthy selves to sacrifice themselves, to the greater good of your colony...",
-                responses: [
-                  {
-                    text: "By sacrifice, you mean you expect us to let you eat us?!",
-                    next: {
-                      name: "Angoliant the Terrible",
-                      icon: "img/spider.png",
-                      text: "Ah, you understand perfectly. Wonderful. Yes, Angoliant will give you the tools to destroy your Enemy, and in return, some of you will sacrifice your delicious flesh to Angoliant. Believe what Angoliant says, for with Angoliant's power, many more of your puny lives will be saved from this war.",
-                      responses: [
-                        {
-                          text: "We Ants would never agree to such a hideous deal! Ants do not fear death, but we will never die without honor!",
-                          next: {
-                            name: "Angoliant the Terrible",
-                            icon: "img/spider.png",
-                            text: "Foolish Ants... Die with your honor then! Prepare yourselves...",
-                            responses: [
-                              {
-                                text: "Stand your ground! We fight to the last ant!",
-                                action: spiderAttack,
-                              },
-                            ],
-                          },
-                        },
-                        {
-                          text: "You ask for far too much, Angoliant... but compared to the war with the Enemy... even you are the lesser of two evils. The Ants will accept your evil bargain.",
-                          next: {
-                            name: "Angoliant the Terrible",
-                            icon: "img/spider.png",
-                            text: "Yessssss... good, good... Angoliant will tell you the location of Angoliant's secret lair. When you are ready, come to Angoliant with your sacrifices! Hahahahaha!",
-                            responses: [
-                              {
-                                text: "We will do what must be done... for the colony.",
-                                action: spiderInCamp,
-                              },
-                            ],
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    text: "I don't like where this is going... Ants! Attack!",
-                    next: {
-                      name: "Angoliant the Terrible",
-                      icon: "img/spider.png",
-                      text: "Then so be it. Angoliant has more fun this way anyways!",
-                      responses: [
-                        {
-                          text: "Charge!",
-                          action: spiderAttack,
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-            {
-              text: "We don't trust you! And we would rather die fighting!",
-              next: {
-                name: "Angoliant the Terrible",
-                icon: "img/spider.png",
-                text: "Fools. You die pointlessly.",
-                responses: [
-                  {
-                    text: "Then we die as warriors!",
-                    action: spiderAttack,
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-      {
-        text: "We do not fear you, foul beast! Everyone attack!",
-        next: {
-          name: "Angoliant the Terrible",
-          icon: "img/spider.png",
-          text: "Brave but foolish. None can stand against Angoliant.",
-          responses: [
-            {
-              text: "To battle!",
-              action: spiderAttack,
-            },
-          ],
-        },
-      },
-      {
-        text: "S-s-s-SPIDER! RUN!",
-        next: {
-          name: "Angoliant the Terrible",
-          icon: "img/spider.png",
-          text: "Cowards! No one escapes from Angoliant!",
-          responses: [
-            {
-              text: "Scatter!",
-              action: spiderAttack,
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    name: "Heracles the Mighty",
-    icon: "img/beetle.png",
-    music: "audio/beetleMusic.wav",
-    text: "A large, muscular beetle approaches the ant hill... He says he wishes to speak to the queen...",
-    responses: [
-      {
-        text: "What do you want with our Queen?",
-        next: {
-          name: "Heracles the Mighty",
-          icon: "img/beetle.png",
-          text: "Hello friend! Allow me to introduce myself! Professionally I am known as 'The World's Strongest Beetle In The Entire World'! But you can just call me Heracles: 'The Mightiest One'!",
-          responses: [
-            {
-              text: "Uh huh...",
-              next: {
-                name: "Heracles the Mighty",
-                icon: "img/beetle.png",
-                text: "Anyways... To become even stronger, I need protein! Ant eggs are so legendary full of protein, I believe they can give even more amazing muscles! So I will trade your Queen many sticks for her eggs!",
-                responses: [
-                  {
-                    text: "What? That's so messed up! Our eggs aren't for sale! No way! Get outta here now!",
-                    next: {
-                      name: "Heracles the Mighty",
-                      icon: "img/beetle.png",
-                      text: "I-is that s-so... b-but what about my... my gains!!! Wahhhh!",
-                      responses: [
-                        {
-                          text: "That's right, scram!",
-                          action: heraclesCrying,
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    text: "Sticks you say? I think an arrangement could be made...",
-                    next: {
-                      name: "Heracles the Mighty",
-                      icon: "img/beetle.png",
-                      text: "Hurrah! I will be working out over here! Bring me all the eggs you can!",
-                      responses: [
-                        {
-                          text: "Alright, deal.",
-                          action: heraclesInCamp,
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  },
-];
-
 function initializeGameState() {
   const savedState = localStorage.getItem("antWarsGameState");
 
@@ -237,17 +55,30 @@ function initializeGameState() {
 }
 
 function openSpecialEvent() {
-  if (Math.random() < 0.5) {
-    const availableCharacters = characters.filter(
-      (char) => !gameState.encounteredCharacters.includes(char.name)
-    );
+  if (Math.random() < 0.01) {
+    const availableCharacters = characters.filter((char) => {
+      // get the number of encounters had
+      const encounterCount = gameState.encounteredCharacters[char.name] || 0;
+      // if the user had less encounters than the amount of encounters available
+      // we leave that character in available characters
+      return encounterCount < char.encounters.length;
+    });
 
     if (availableCharacters.length > 0) {
+      pauseTimer();
+
       const randomChar =
         availableCharacters[
           Math.floor(Math.random() * availableCharacters.length)
         ];
       gameState.encounteredCharacters.push(randomChar.name);
+
+      // get the number of encounters we've had with that specific character
+      const encounterCount =
+        gameState.encounteredCharacters[randomChar.name] || 0;
+
+      // increment the number of encounters
+      gameState.encounteredCharacters[randomChar.name] = encounterCount + 1;
 
       const eventPopup = document.getElementById("eventPopup");
       const dialogueName = document.getElementById("dialogue-name");
@@ -257,12 +88,12 @@ function openSpecialEvent() {
 
       // Function to display dialogue and options
       const displayDialogue = (dialogue) => {
-        dialogueName.textContent = dialogue.name;
+        dialogueName.textContent = randomChar.name;
         dialogueText.textContent = dialogue.text;
 
         // Update the character icon
-        characterIcon.src = dialogue.icon; // Set the src attribute
-        characterIcon.alt = `${dialogue.name} icon`; // Update the alt text
+        characterIcon.src = randomChar.icon; // Set the src attribute
+        characterIcon.alt = `${randomChar.name} icon`; // Update the alt text
 
         dialogueOptions.innerHTML = "";
 
@@ -288,10 +119,13 @@ function openSpecialEvent() {
       };
 
       // Start the dialogue
-      displayDialogue(randomChar);
+      displayDialogue(randomChar.encounters[encounterCount]);
+
+      // for special cases you may need to filter them out of this logic
+      // example, if encounter.shop, then filter out
+      // also consider when your characters are in shop
 
       eventPopup.style.display = "flex";
-      pauseTimer();
       playSound(randomChar.music);
     }
   }
@@ -323,8 +157,10 @@ function spiderAttack() {
   addToLog(
     "In only a fraction of a second, Angoliant ripped apart and ate all 10 of the warrior ants!"
   );
-  document.getElementById("workerCount").textContent =
-    gameState.playerAntHill.ants.workers;
+
+  // AXE ME
+  // document.getElementById("workerCount").textContent =
+  //   gameState.playerAntHill.ants.workers;
   closeSpecialEvent();
 }
 
@@ -418,11 +254,10 @@ function openShop() {
   menuButtonOn();
 }
 function openMerchants() {
-  
-
   document.getElementById("merchantPopup").style.display = "flex";
 
-  const merchantopup = document.getElementById("merchantPopup");
+  // typo merchantPopup
+  const merchantPopup = document.getElementById("merchantPopup");
   merchantPopup.innerHTML = "";
 
   if (gameState.spiderInCamp) {
@@ -446,11 +281,24 @@ function openMerchants() {
 
   pauseTimer();
 }
+
+// close function... might be the move
+function closeMenuExample(menuId) {
+  document.getElementById(menuId).style.display = "none";
+
+  if (menuId === "merchantPopup") {
+    // do this
+  }
+
+  if (menuId === "shopPopup") {
+    // do this
+  }
+}
+
 function closeMerchants() {
   document.getElementById("merchantPopup").style.display = "none";
   document.getElementById("shopPopup").style.display = "flex";
 }
-
 
 function closeShop() {
   document.getElementById("shopPopup").style.display = "none";
@@ -458,37 +306,13 @@ function closeShop() {
   menuButtonOff();
 }
 
-function startNewGame() {
-  localStorage.setItem("antWarsGameState", JSON.stringify(defaultGameState));
-
-  startTimer();
-  updateResourceStats();
-
-  console.log("New game started.");
-}
-
-function saveGame() {
-  localStorage.setItem("antWarsGameState", JSON.stringify(gameState));
-
-  console.log("Game saved.");
-}
-
-function loadGame() {
-  const savedState = JSON.parse(localStorage.getItem("antWarsGameState"));
-
-  if (savedState) {
-    gameState = savedState;
-    console.log("Game loaded.");
-    updateResourceStats();
-  } else {
-    console.log("No saved game found.");
-  }
-}
-
 function calculateCombatStats() {
-  const enemyAttack = gameState.playerAntHill.ants.enemy * 5;
+  let enemyBaseAttack = gameState.playerAntHill.ants.enemy * 5;
 
-  const enemyDefence = gameState.playerAntHill.ants.enemy * 5;
+  let enemyBaseDefence = gameState.playerAntHill.ants.enemy * 5;
+
+  const enemyDefence = enemyBaseDefence * gameState.enemyDefenceMultiplier;
+  const enemyAttack = enemyBaseAttack * gameState.enemyAttackMultiplier;
 
   let baseAttack =
     gameState.playerAntHill.ants.guards * 8 +
@@ -500,27 +324,15 @@ function calculateCombatStats() {
     gameState.playerAntHill.ants.warriors * 8 +
     gameState.playerAntHill.ants.workers * 1;
 
-  let attackMultiplier = 1;
-  if (gameState.attackLevelOne) attackMultiplier += 0.5;
-  if (gameState.attackLevelTwo) attackMultiplier += 0.5;
-  if (gameState.attackLevelThree) attackMultiplier += 0.5;
-  if (gameState.spiderVenom) attackMultiplier += 0.5;
-
-  let defenceMultiplier = 1;
-  if (gameState.defenceLevelOne) defenceMultiplier += 0.5;
-  if (gameState.defenceLevelTwo) defenceMultiplier += 0.5;
-  if (gameState.defenceLevelThree) defenceMultiplier += 0.5;
-
-  const playerDefence = baseDefence * defenceMultiplier;
-
-  const playerAttack = baseAttack * attackMultiplier;
+  const playerDefence = baseDefence * gameState.defenceMultiplier;
+  const playerAttack = baseAttack * gameState.attackMultiplier;
 
   return { enemyAttack, enemyDefence, playerAttack, playerDefence };
 }
 
 function upgradeAttack() {
   if (gameState.playerAntHill.resources.sticks >= 100) {
-    gameState.attackLevelOne = true;
+    gameState.attackMultiplier += 0.5;
     gameState.playerAntHill.resources.sticks -= 100;
 
     console.log("Attack increased!");
@@ -553,28 +365,6 @@ function startTimer() {
   }
 }
 
-function everySecondEvents() {
-  gameState.playerAntHill.ants.enemy++;
-  gameState.playerAntHill.resources.eggs++;
-
-  const foodGathered =
-    gameState.playerAntHill.ants.workers * 10 +
-    gameState.playerAntHill.ants.guards * 1 +
-    gameState.playerAntHill.ants.warriors * 1;
-  gameState.playerAntHill.resources.food += foodGathered;
-
-  console.log(foodGathered + 1 + " food has been gathered");
-
-  openSpecialEvent();
-  updateResourceStats();
-  calculateCombatStats();
-  updateHatchGuardButton();
-  updateHatchWarriorButton();
-  updateHatchWorkerButton();
-  checkVictory();
-  checkDefeat();
-}
-
 function checkVictory() {
   if (gameState.playerAntHill.ants.enemy <= 0) {
     triggerVictory();
@@ -603,82 +393,69 @@ function triggerDefeat() {
   addToLog("Defeat! All your ants have been eliminated.");
   pauseTimer();
 }
+function everySecondEvents() {
+  gameState.playerAntHill.ants.enemy++;
+  gameState.playerAntHill.resources.eggs++;
 
+  const foodGathered =
+    gameState.playerAntHill.ants.workers * 10 +
+    gameState.playerAntHill.ants.guards * 1 +
+    gameState.playerAntHill.ants.warriors * 1;
+  gameState.playerAntHill.resources.food += foodGathered;
+
+  console.log(foodGathered + 1 + " food has been gathered");
+
+  openSpecialEvent();
+  updateResourceStats();
+  calculateCombatStats();
+  updateHatchButton("hatchGuard");
+  updateHatchButton("hatchWarrior");
+  updateHatchButton("hatchWorker");
+  checkVictory();
+  checkDefeat();
+}
 function everyTenSecondEvents() {
+  stickGathered();
+  foodCost();
+  updateResourceStats();
+  console.log("Enemy ants:", gameState.playerAntHill.ants.enemy);
+  console.log("Guards:", gameState.playerAntHill.ants.guards);
+  console.log("Warriors:", gameState.playerAntHill.ants.warriors);
+  console.log("Workers:", gameState.playerAntHill.ants.workers);
+  console.log("Attack Multiplier:", gameState.attackMultiplier);
+  console.log("Defence Multiplier:", gameState.defenceMultiplier);
+  console.log("Enemy Attack Multiplier:", gameState.enemyAttackMultiplier);
+  console.log("Enemy Defence Multiplier:", gameState.enemyDefenceMultiplier);
+}
+
+function everyThirtySecondEvents() {
+  triggerRaid();
+  enemyUpgrade();
+}
+
+function enemyUpgrade() {
+  if (Math.random() < 0.5) {
+    console.log("The enemy failed to evolve!");
+  } else {
+    if (Math.random() < 0.5) {
+      gameState.enemyAttackMultiplier += 0.5;
+      addToLog("The enemy evolved stronger attack!");
+    } else {
+      gameState.enemyDefenceMultiplier += 0.5;
+      addToLog("The enemy evolved stronger defence!");
+    }
+  }
+}
+
+function stickGathered() {
   const sticksGathered = gameState.playerAntHill.ants.workers * 1;
 
   gameState.playerAntHill.resources.sticks += sticksGathered;
 
   console.log(sticksGathered + 1 + " sticks has been gathered");
-  const foodCost =
-    gameState.playerAntHill.ants.workers * 10 +
-    gameState.playerAntHill.ants.guards * 80 +
-    gameState.playerAntHill.ants.warriors * 80;
-
-  if (gameState.playerAntHill.resources.food >= foodCost) {
-    gameState.playerAntHill.resources.food -= foodCost;
-  } else {
-    let deficit = foodCost - gameState.playerAntHill.resources.food;
-    gameState.playerAntHill.resources.food = 0;
-    let warriorsDied = 0;
-    let guardsDied = 0;
-    let workersDied = 0;
-
-    while (deficit > 0) {
-      if (
-        gameState.playerAntHill.ants.guards > 0 &&
-        gameState.playerAntHill.ants.warriors > 0
-      ) {
-        if (Math.random() < 0.5) {
-          gameState.playerAntHill.ants.guards -= 1;
-          deficit -= 80;
-          guardsDied += 1;
-        } else {
-          gameState.playerAntHill.ants.warriors -= 1;
-          deficit -= 80;
-          warriorsDied += 1;
-        }
-      } else if (gameState.playerAntHill.ants.guards > 0) {
-        gameState.playerAntHill.ants.guards -= 1;
-        deficit -= 80;
-        guardsDied += 1;
-      } else if (gameState.playerAntHill.ants.warriors > 0) {
-        gameState.playerAntHill.ants.warriors -= 1;
-        deficit -= 80;
-        warriorsDied += +1;
-      } else if (gameState.playerAntHill.ants.workers > 0) {
-        gameState.playerAntHill.ants.workers -= 1;
-        deficit -= 10;
-        workersDied += +1;
-      } else {
-        break;
-      }
-    }
-    console.log(
-      `Famine has struck! ${guardsDied} Guards, ${warriorsDied} Warriors, and ${workersDied} Workers died.`
-    );
-
-    addToLog("Famine has struck!");
-
-    if (warriorsDied >= 1) {
-      addToLog(`${warriorsDied} warriors have starved to death`);
-    }
-
-    if (guardsDied >= 1) {
-      addToLog(`${guardsDied} guards have starved to death`);
-    }
-
-    if (workersDied >= 1) {
-      addToLog(`${workersDied} workers have starved to death`);
-    }
-  }
-
-  updateResourceStats();
-
-  console.log(foodCost + 1 + " food has been consumed");
 }
 
-function everyThirtySecondEvents() {
+function triggerRaid() {
   console.log("The Enemy attempted a raid!");
   addToLog("The Enemy attempted a raid!");
   if (Math.random() < 0.5) {
@@ -716,8 +493,6 @@ function everyThirtySecondEvents() {
 
         antLoss -= 1;
       }
-
-      updateResourceStats();
     }
   }
 
@@ -725,6 +500,68 @@ function everyThirtySecondEvents() {
     gameState.raidAvailable = true;
     console.log("Raiding is now available!");
     updateRaidButton();
+  }
+}
+function foodCost() {
+  let workers = gameState.playerAntHill.ants.workers;
+  let guards = gameState.playerAntHill.ants.guards;
+  let warriors = gameState.playerAntHill.ants.warriors;
+  const foodCost = workers * 10 + guards * 80 + warriors * 80;
+
+  if (gameState.playerAntHill.resources.food >= foodCost) {
+    gameState.playerAntHill.resources.food -= foodCost;
+  } else {
+    let deficit = foodCost - gameState.playerAntHill.resources.food;
+    gameState.playerAntHill.resources.food = 0;
+    let warriorsDied = 0;
+    let guardsDied = 0;
+    let workersDied = 0;
+
+    while (deficit > 0) {
+      if (guards > 0 && warriors > 0) {
+        if (Math.random() < 0.5) {
+          guards -= 1;
+          deficit -= 80;
+          guardsDied += 1;
+        } else {
+          warriors -= 1;
+          deficit -= 80;
+          warriorsDied += 1;
+        }
+      } else if (guards > 0) {
+        guards -= 1;
+        deficit -= 80;
+        guardsDied += 1;
+      } else if (warriors > 0) {
+        warriors -= 1;
+        deficit -= 80;
+        warriorsDied += +1;
+      } else if (workers > 0) {
+        workers -= 1;
+        deficit -= 10;
+        workersDied += +1;
+      } else {
+        break;
+      }
+      console.log(foodCost + 1 + " food has been consumed");
+    }
+    console.log(
+      `Famine has struck! ${guardsDied} Guards, ${warriorsDied} Warriors, and ${workersDied} Workers died.`
+    );
+
+    addToLog("Famine has struck!");
+
+    if (warriorsDied >= 1) {
+      addToLog(`${warriorsDied} warriors have starved to death`);
+    }
+
+    if (guardsDied >= 1) {
+      addToLog(`${guardsDied} guards have starved to death`);
+    }
+
+    if (workersDied >= 1) {
+      addToLog(`${workersDied} workers have starved to death`);
+    }
   }
 }
 
@@ -762,49 +599,23 @@ function addToLog(message) {
 
   logArea.scrollTop = logArea.scrollHeight;
 }
-function hatchGuard() {
+
+function hatchAnt(type) {
   if (gameState.playerAntHill.resources.eggs >= 1) {
-    gameState.playerAntHill.ants.guards += 1;
+    gameState.playerAntHill.ants[type] += 1;
     gameState.playerAntHill.resources.eggs -= 1;
     playSound(hatchingSound);
 
-    console.log("A Guard was hatched!");
+    console.log(`A ${type} was hatched!`);
 
     updateResourceStats();
-    updateHatchGuardButton();
+    updateHatchButton(
+      `hatch${type.charAt(0).toUpperCase() + type.slice(1, -1)}`
+    );
   } else {
-    console.log("No eggs available!");
-  }
-}
-
-function hatchWarrior() {
-  if (gameState.playerAntHill.resources.eggs >= 1) {
-    gameState.playerAntHill.ants.warriors += 1;
-    gameState.playerAntHill.resources.eggs -= 1;
-    playSound(hatchingSound);
-
-    console.log("A Warrior was hatched!");
-
-    updateResourceStats();
-    updateHatchWarriorButton();
-  } else {
-    console.log("No eggs available!");
-  }
-}
-
-function hatchWorker() {
-  if (gameState.playerAntHill.resources.eggs >= 1) {
-    gameState.playerAntHill.ants.workers += 1;
-    gameState.playerAntHill.resources.eggs -= 1;
-
-    playSound(hatchingSound);
-
-    console.log("A Worker was hatched!");
-
-    updateResourceStats();
-    updateHatchWorkerButton();
-  } else {
-    console.log("No eggs available!");
+    const eggCountButton = document.getElementById("eggCount");
+    eggCountButton.classList.add("noEggs");
+    addToLog("No eggs available!");
   }
 }
 
@@ -895,44 +706,169 @@ function menuButtonOff() {
   shopButton.disable = false;
 }
 
-function updateHatchGuardButton() {
-  const hatchGuardButton = document.getElementById("hatchGuard");
+function updateHatchButton(buttonId) {
+  const button = document.getElementById(buttonId);
+  const isDisabled = gameState.playerAntHill.resources.eggs === 0;
 
-  if (gameState.playerAntHill.resources.eggs === 0) {
-    hatchGuardButton.classList.add("disable");
-    hatchGuardButton.disable = true;
+  button.classList.toggle("disable", isDisabled);
+  button.disabled = isDisabled;
+
+  const eggCountButton = document.getElementById("eggCount");
+  eggCountButton.classList.toggle("noEggs", isDisabled);
+}
+
+function startNewGame() {
+  gameState = JSON.parse(JSON.stringify(defaultGameState));
+  localStorage.setItem("antWarsGameState", JSON.stringify(gameState));
+  startTimer();
+  updateResourceStats();
+  addToLog("New game started.");
+}
+
+function saveGame(saveFileName) {
+  const savedGames =
+    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
+
+  const existingSaveIndex = savedGames.findIndex(
+    (game) => game.name === saveFileName
+  );
+
+  if (existingSaveIndex !== -1) {
+    savedGames[existingSaveIndex] = { name: saveFileName, state: gameState };
+    addToLog(`Overwritten save file: "${saveFileName}".`);
   } else {
-    hatchGuardButton.classList.remove("disable");
-    hatchGuardButton.disable = false;
+    savedGames.push({ name: saveFileName, state: gameState });
+    addToLog(`Game saved as "${saveFileName}".`);
+  }
+
+  localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
+}
+
+function loadGame() {
+  const savedState = JSON.parse(localStorage.getItem("antWarsGameState"));
+
+  if (savedState) {
+    gameState = savedState;
+    console.log("Game loaded.");
+    updateResourceStats();
+  } else {
+    console.log("No saved game found.");
   }
 }
 
-function updateHatchWarriorButton() {
-  const hatchWarriorButton = document.getElementById("hatchWarrior");
+function openNewGameConfirmationPopup() {
+  document.getElementById("newGameConfirmationPopup").style.display = "flex";
+}
+function closeNewGameConfirmationPopup() {
+  document.getElementById("newGameConfirmationPopup").style.display = "none";
+}
 
-  if (gameState.playerAntHill.resources.eggs === 0) {
-    hatchWarriorButton.classList.add("disable");
-    hatchWarriorButton.disable = true;
+function confirmNewGame() {
+  startNewGame();
+  closeNewGameConfirmationPopup();
+  closeMenu();
+}
+function openSavedGamesPopup() {
+  const savedGamesPopup = document.getElementById("savedGamesPopup");
+  const savedGamesList = document.getElementById("savedGamesList");
+  savedGamesList.innerHTML = "";
+
+  const savedGames =
+    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
+
+  savedGames.forEach((game, index) => {
+    const gameItem = document.createElement("div");
+    gameItem.className = "saved-game-item";
+
+    const loadButton = document.createElement("button");
+    loadButton.textContent = `Load: ${game.name || `Game ${index + 1}`}`;
+    loadButton.onclick = () => loadSavedGame(index);
+    gameItem.appendChild(loadButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = () => openDeleteConfirmationPopup(index);
+    gameItem.appendChild(deleteButton);
+
+    savedGamesList.appendChild(gameItem);
+  });
+
+  savedGamesPopup.style.display = "flex";
+  pauseTimer();
+}
+
+function closeSavedGamesPopup() {
+  document.getElementById("savedGamesPopup").style.display = "none";
+}
+
+function loadSavedGame(index) {
+  const savedGames =
+    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
+  if (savedGames[index]) {
+    gameState = savedGames[index].state;
+    updateResourceStats();
+    closeSavedGamesPopup();
+    console.log(`Loaded saved game: ${savedGames[index].name}`);
   } else {
-    hatchWarriorButton.classList.remove("disable");
-    hatchWarriorButton.disable = false;
+    console.log("No saved game found at index", index);
   }
 }
 
-function updateHatchWorkerButton() {
-  const hatchWorkerButton = document.getElementById("hatchWorker");
-
-  if (gameState.playerAntHill.resources.eggs === 0) {
-    hatchWorkerButton.classList.add("disable");
-    hatchWorkerButton.disable = true;
+function deleteSavedGame(index) {
+  const savedGames =
+    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
+  if (savedGames[index]) {
+    const deletedGameName = savedGames[index].name;
+    savedGames.splice(index, 1);
+    localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
+    openSavedGamesPopup(); 
+    console.log(`Deleted saved game: ${deletedGameName}`);
   } else {
-    hatchWorkerButton.classList.remove("disable");
-    hatchWorkerButton.disable = false;
+    console.log("No saved game found at index", index);
+  }
+}
+let saveGameIndexToDelete = null;
+
+function openNameSavePopup() {
+  document.getElementById("nameSavePopup").style.display = "flex";
+}
+
+function closeNameSavePopup() {
+  document.getElementById("nameSavePopup").style.display = "none";
+}
+
+function confirmSaveGame() {
+  const saveFileNameInput = document.getElementById("saveFileNameInput");
+  const saveFileName = saveFileNameInput.value.trim();
+
+  if (!saveFileName) {
+    addToLog("Please enter a name for your save file.");
+    return;
+  }
+
+  saveGame(saveFileName);
+  closeNameSavePopup();
+  saveFileNameInput.value = "";
+}
+
+function openDeleteConfirmationPopup(index) {
+  saveGameIndexToDelete = index;
+  document.getElementById("deleteConfirmationPopup").style.display = "flex";
+}
+
+function closeDeleteConfirmationPopup() {
+  saveGameIndexToDelete = null;
+  document.getElementById("deleteConfirmationPopup").style.display = "none";
+}
+
+function confirmDeleteGame() {
+  if (saveGameIndexToDelete !== null) {
+    deleteSavedGame(saveGameIndexToDelete);
+    closeDeleteConfirmationPopup();
   }
 }
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
-
   const buttons = document.querySelectorAll("button");
   buttons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -941,184 +877,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const hatchGuardButton = document.getElementById("hatchGuard");
-  hatchGuardButton.addEventListener("click", hatchGuard);
-
-  const hatchWarriorButton = document.getElementById("hatchWarrior");
-  hatchWarriorButton.addEventListener("click", hatchWarrior);
-
-  const hatchWorkerButton = document.getElementById("hatchWorker");
-  hatchWorkerButton.addEventListener("click", hatchWorker);
-
-  const raidEnemyButton = document.getElementById("raidEnemy");
-  raidEnemyButton.addEventListener("click", raidEnemy);
-
   const hatchingSound = document.getElementById("hatchingSound");
-
   const raidSuccess = document.getElementById("raidSuccess");
-
   const raidFailed = document.getElementById("raidFailed");
 });
-
-/* 
-
-
- Colony population and stats:
-
-    Every second, one egg is added to players egg inventory.
-
-    Hatching an ant cost one egg.
-
-    Every living ant is counted towards population
-
-    Killed ants are removed from population.
-
-
-    Populatin cannot exceed 999.
-
-    if a Worker type ant is hatched, one ant is created with the following stats:
-
-    Attack: 1
-    Defence: 1
-    Food gathering: 1 food per second 
-    Food cost: 1
-
-    if a Guard type ant is hatched, one ant is created with the following stats:
-
-    Attack: 8
-    Defence: 16
-    Food gathering: 1/10 food per second 
-    Food cost: 8
-
-    if a Warrior type ant is hatched, one ant is created with the following stats:
-
-    Attack: 16
-    Defence: 8
-    Food gathering: 1/10 food per second 
-    Food cost: 8
-
-
-    Colony's Attack, Defence, Food Gathering, and Food Cost stats, are the sum of the individual (living) ants stats combined.
-
-
- Food system:
-
-    Gathering
-
-        Food is gathered every second and added to food store.
-
-        The total food gathered each second is equal to the sum of all colonys ants food gathering stats. 
-
-        Food can be gathered in fractions, but only the floor of the number appears to the player.
-
-    
-
-    Food costs
-
-
-        Every 10 seconds food is deducted from food store. 
-
-        Fractions are ignored. Only the floor of the number is used. 
-
-        Food deducted is equal to the sum of food cost stat of all colonys ants.
-
-        If food cost is greater than the food stores, ants will die based on the food deficit.
-
-        Ex. Food store is 23, and food cost is 97, there is a 74 food cost deficit. 
-
-        Ants will die randomly until the food cost of dead ants is greater to or equal the food cost deficit.
-
-        Guard and Warrior ants die before Worker ants. 
-
-        If the population of Guard and Warrior ants equal zero, food shortage will then affect Worker ants.
-
-        ex. 
-
-        In a population distribution of:
-
-            25 Workers 
-            5 Guards
-            4 Warriors
-
-        4 Warrior and 5 Guard ants die = 72 food cost.
-
-        food deficit is now 2.
-
-        2 Worker ants now die. = 2 food cost
-
-        Food deficit is equal to food cost of dead ants. 
-
-        Population is now:
-
-            23 Workers 
-            0 Guards
-            0 Warriors
-
-
-
-
-     Enemy colony:
-
-        The enemy adds to their population at one per 1.5 second.
-
-        Enemy ants have individual stats are randomly generated. 
-
-        Individual enemy ants total stats have a minimum of 5 and a maximum of 8. 
-
-        ex. An enemy ant could have 3 attack and 5 defence, while the next could have 4 attack and 1 defence.
-
-        Enemy colony's Attack and Defence stats are the sum of the individual ants stats combined.
-
-        Food is not a factor for the enemy. 
-
-        
-
-
-     Raiding:
-
-        Every thirty seconds the enemy will attempt to raid you.
-
-        There is a 50% chance their raid will fail.
-
-        If their raid is sucessful, it will kill your ants.
-
-        Loss = 10 x Enemy Attack / Players Defence
-
-        Loss rounds to nearest natural number.
-
-        Guard and Warrior ants die before Worker ants. 
-
-        If the population of Guard and Warrior ants equal zero, Worker ants would then die.
-
-            Ex. 
-                Player has 276 Defence
-
-                Enemy has 198 Attack
-                
-                10 x 198/276 = 7.1
-
-                7.1 rounds down to 7
-
-                7 ants die
-        
-        
-
-        The player has the ability to raid the enemy in the same way every 30 seconds by pressing a button.
-
-        
-        
-     Victory:
-
-        Victory is acheived when Enemy colony's population equals zero.
-
-        or
-
-        Victory is acheived if you reach 999 population before the enemy.
-
-    Defeat
-
-        The Enemy's population reaching 999 will result in defeat.
-
-        or
-
-        Your population reaching zero, due to either food shortage or enemy raid will result in defeat. */

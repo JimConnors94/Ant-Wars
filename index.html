@@ -20,10 +20,16 @@
         </div>
 
         <div id="buttons">
-          <button id="hatchGuard">Hatch Guard</button>
-          <button id="hatchWarrior">Hatch Warrior</button>
-          <button id="hatchWorker">Hatch Worker</button>
-          <button id="raidEnemy">Raid Enemy</button>
+          <button id="hatchGuard" onclick="hatchAnt('guard')">
+            Hatch Guard
+          </button>
+          <button id="hatchWarrior" onclick="hatchAnt('warrior')">
+            Hatch Warrior
+          </button>
+          <button id="hatchWorker" onclick="hatchAnt('worker')">
+            Hatch Worker
+          </button>
+          <button id="raidEnemy" onclick="raidEnemy()">Raid Enemy</button>
         </div>
 
         <div id="logArea"></div>
@@ -47,7 +53,7 @@
 
           <div class="resource-panel">
             <p>Food: <span id="foodCount">0</span></p>
-            <p>Eggs: <span id="eggCount">0</span></p>
+            <p>Eggs: &nbsp;<span id="eggCount">0</span></p>
             <p>Sticks: <span id="stickCount">0</span></p>
           </div>
         </div>
@@ -68,10 +74,9 @@
 
       <div id="menuPopup" class="popup">
         <button onclick="openRules()">Game Rules</button>
-
-        <button onclick="startNewGame()">Start New Game</button>
-        <button onclick="saveGame()">Save Game</button>
-        <button onclick="loadGame()">Load Game</button>
+        <button onclick="openNewGameConfirmationPopup()">Start New Game</button>
+        <button onclick="openNameSavePopup()">Save Game</button>
+        <button onclick="openSavedGamesPopup()">Load Game</button>
         <button onclick="closeMenu()">Close</button>
       </div>
 
@@ -92,10 +97,7 @@
       </div>
 
       <div id="shopPopup" class="popup">
-
         <button onclick="openUpgrades()">Upgrades</button>
-        
-  
 
         <button onclick="upgradeAttack()">Upgrade Attack</button>
         <button onclick="upgradeDefence()">Upgrade Defence</button>
@@ -104,9 +106,7 @@
         <button onclick="closeShop()">Close</button>
       </div>
 
-      <div id="merchantPopup" class="popup">
-        
-      </div>
+      <div id="merchantPopup" class="popup"></div>
 
       <div id="rulesPopup" class="popup">
         <p>
@@ -140,6 +140,39 @@
       </div>
     </div>
 
+    <div id="savedGamesPopup" class="popup">
+      <h2>Saved Games</h2>
+      <div id="savedGamesList"></div>
+      <button onclick="closeSavedGamesPopup()">Close</button>
+    </div>
+
+    <div id="nameSavePopup" class="popup">
+      <h2>Name Your Save File</h2>
+      <input
+        type="text"
+        id="saveFileNameInput"
+        placeholder="Enter save file name"
+      />
+      <button onclick="confirmSaveGame()">Save</button>
+      <button onclick="closeNameSavePopup()">Cancel</button>
+    </div>
+
+    <div id="deleteConfirmationPopup" class="popup">
+      <h2>Are you sure?</h2>
+      <p>This action cannot be undone.</p>
+      <button onclick="confirmDeleteGame()">Yes, Delete</button>
+      <button onclick="closeDeleteConfirmationPopup()">Cancel</button>
+    </div>
+
+    <div id="newGameConfirmationPopup" class="popup">
+      <h2>Start New Game?</h2>
+      <p>This will delete any unsaved progress. Are you sure?</p>
+      <button onclick="confirmNewGame()">Yes, Start New Game</button>
+      <button onclick="closeNewGameConfirmationPopup()">Cancel</button>
+    </div>
+
     <script src="scripts.js"></script>
+
+    <script src="characters.js"></script>
   </body>
 </html>
