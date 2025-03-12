@@ -35,7 +35,7 @@
         <div id="logArea"></div>
 
         <div>
-          <button id="shopButton" onclick="openShop()">Open Shop</button>
+          <button id="shopButton" onclick="openMenu('shopPopup')">Open Shop</button>
         </div>
       </div>
 
@@ -69,15 +69,15 @@
         <p>Enemy: <span id="enemyCount">0</span></p>
         <p>Enemy Attack: <span id="enemyAttack">0</span></p>
         <p>Enemy Defence: <span id="enemyDefence">0</span></p>
-        <button id="menuButton" onclick="openMenu()">Main Menu</button>
+        <button id="menuButton" onclick="openMenu('menuPopup')">Main Menu</button>
       </div>
 
       <div id="menuPopup" class="popup">
-        <button onclick="openRules()">Game Rules</button>
-        <button onclick="openNewGameConfirmationPopup()">Start New Game</button>
-        <button onclick="openNameSavePopup()">Save Game</button>
-        <button onclick="openSavedGamesPopup()">Load Game</button>
-        <button onclick="closeMenu()">Close</button>
+        <button onclick="openMenu('rulesPopup')">Game Rules</button>
+        <button onclick="openMenu('newGameConfirmationPopup')">Start New Game</button>
+        <button onclick="openMenu('nameSavePopup')">Save Game</button>
+        <button onclick="openMenu('savedGamesPopup')">Load Game</button>
+        <button onclick="closeMenu('menuPopup')">Close</button>
       </div>
 
       <div id="eventPopup" class="popup">
@@ -97,13 +97,11 @@
       </div>
 
       <div id="shopPopup" class="popup">
-        <button onclick="openUpgrades()">Upgrades</button>
-
+        <button onclick="openMenu('upgradesPopup')">Upgrades</button>
         <button onclick="upgradeAttack()">Upgrade Attack</button>
         <button onclick="upgradeDefence()">Upgrade Defence</button>
-        <button onclick="openMerchants()">Merchants</button>
-
-        <button onclick="closeShop()">Close</button>
+        <button onclick="openMenu('merchantPopup')">Merchants</button>
+        <button onclick="closeMenu('shopPopup')">Close</button>
       </div>
 
       <div id="merchantPopup" class="popup"></div>
@@ -131,48 +129,84 @@
           ants.
         </p>
         <p>After an enemy attempts a raid, you'll be able to strike back.</p>
-
-        <button onclick="closeRules()">Close</button>
+        <button onclick="closeMenu('rulesPopup')">Close</button>
       </div>
 
       <div id="spiderPopup" class="popup">
-        <button onclick="closeSpider()">Close</button>
+        <button onclick="closeMenu('spiderPopup')">Close</button>
+      </div>
+
+      <div id="savedGamesPopup" class="popup">
+        <h2>Saved Games</h2>
+        <div id="savedGamesList"></div>
+        <button onclick="closeMenu('savedGamesPopup')">Close</button>
+      </div>
+
+      <div id="nameSavePopup" class="popup">
+        <h2>Name Your Save File</h2>
+        <input
+          type="text"
+          id="saveFileNameInput"
+          placeholder="Enter save file name"
+        />
+        <button onclick="confirmSaveGame()">Save</button>
+        <button onclick="closeMenu('nameSavePopup')">Cancel</button>
+      </div>
+
+      <div id="deleteConfirmationPopup" class="popup">
+        <h2>Are you sure?</h2>
+        <p>This action cannot be undone.</p>
+        <button onclick="confirmDeleteGame()">Yes, Delete</button>
+        <button onclick="closeMenu('deleteConfirmationPopup')">Cancel</button>
+      </div>
+
+      <div id="newGameConfirmationPopup" class="popup">
+        <h2>Start New Game?</h2>
+        <p>This will delete any unsaved progress. Are you sure?</p>
+        <button onclick="confirmNewGame()">Yes, Start New Game</button>
+        <button onclick="closeMenu('newGameConfirmationPopup')">Cancel</button>
+      </div>
+
+      <div id="upgradesPopup" class="popup">
+        <h1>Upgrades</h1>
+        <div>
+          <div>
+            <div>Attack</div>
+            <button>Level 1</button>
+            <button>Level 2</button>
+            <div>
+              <button></button>
+              <button></button>
+            </div>
+            <button></button>
+            <button></button>
+            <div>
+              <button></button>
+              <button></button>
+            </div>
+          </div>
+          <div>
+            <div>Defense</div>
+            <button></button>
+            <button></button>
+            <div>
+              <button></button>
+              <button></button>
+            </div>
+            <button></button>
+            <button></button>
+            <div>
+              <button></button>
+              <button></button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div id="savedGamesPopup" class="popup">
-      <h2>Saved Games</h2>
-      <div id="savedGamesList"></div>
-      <button onclick="closeSavedGamesPopup()">Close</button>
-    </div>
-
-    <div id="nameSavePopup" class="popup">
-      <h2>Name Your Save File</h2>
-      <input
-        type="text"
-        id="saveFileNameInput"
-        placeholder="Enter save file name"
-      />
-      <button onclick="confirmSaveGame()">Save</button>
-      <button onclick="closeNameSavePopup()">Cancel</button>
-    </div>
-
-    <div id="deleteConfirmationPopup" class="popup">
-      <h2>Are you sure?</h2>
-      <p>This action cannot be undone.</p>
-      <button onclick="confirmDeleteGame()">Yes, Delete</button>
-      <button onclick="closeDeleteConfirmationPopup()">Cancel</button>
-    </div>
-
-    <div id="newGameConfirmationPopup" class="popup">
-      <h2>Start New Game?</h2>
-      <p>This will delete any unsaved progress. Are you sure?</p>
-      <button onclick="confirmNewGame()">Yes, Start New Game</button>
-      <button onclick="closeNewGameConfirmationPopup()">Cancel</button>
-    </div>
-
     <script src="scripts.js"></script>
-
     <script src="characters.js"></script>
   </body>
 </html>
+
+

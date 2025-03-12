@@ -49,135 +49,136 @@ function initializeGameState() {
   updateResourceStats();
   calculateCombatStats();
   updateRaidButton();
-  openMenu();
+  startTimer();
 
   console.log(savedState ? "Loaded saved game." : "Starting a new game.");
 }
 
-function openSpecialEvent() {
-  if (Math.random() < 0.01) {
-    const availableCharacters = characters.filter((char) => {
-      // get the number of encounters had
-      const encounterCount = gameState.encounteredCharacters[char.name] || 0;
-      // if the user had less encounters than the amount of encounters available
-      // we leave that character in available characters
-      return encounterCount < char.encounters.length;
+function openMenu(menuId) {
+  if (menuId === "merchantPopup") {
+    document.getElementById("merchantPopup").style.display = "flex";
+
+    const merchantPopup = document.getElementById("merchantPopup");
+    merchantPopup.innerHTML = "";
+
+    if (gameState.spiderInCamp) {
+      const spiderButton = document.createElement("button");
+      spiderButton.textContent = "Angoliant the Terrible";
+      spiderButton.onclick = () => openMenu("spiderPopup");
+      merchantPopup.appendChild(spiderButton);
+    }
+
+    if (gameState.heraclesInCamp) {
+      const heraclesButton = document.createElement("button");
+      heraclesButton.textContent = "Heracles the Mighty";
+      heraclesButton.onclick = () => openMenu("heraclesPopup");
+      merchantPopup.appendChild(heraclesButton);
+    }
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.onclick = () => closeMenu("merchantPopup");
+    merchantPopup.appendChild(closeButton);
+
+    pauseTimer();
+  }
+
+  if (menuId === "shopPopup") {
+    document.getElementById("shopPopup").style.display = "flex";
+    pauseTimer();
+    menuButtonOn();
+  }
+
+  if (menuId === "spiderPopup") {
+    if (gameState.spiderInCamp) {
+      document.getElementById("spiderPopup").style.display = "flex";
+    }
+    closeMenu("shopPopup"); // Close the shop when opening the spider popup
+  }
+
+  if (menuId === "heraclesPopup") {
+    if (gameState.heraclesInCamp) {
+      document.getElementById("heraclesPopup").style.display = "flex";
+    }
+    closeMenu("shopPopup"); // Close the shop when opening the Heracles popup
+  }
+
+  if (menuId === "savedGamesPopup") {
+    const savedGamesPopup = document.getElementById("savedGamesPopup");
+    const savedGamesList = document.getElementById("savedGamesList");
+    savedGamesList.innerHTML = "";
+
+    const savedGames =
+      JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
+
+    savedGames.forEach((game, index) => {
+      const gameItem = document.createElement("div");
+      gameItem.className = "saved-game-item";
+
+      const loadButton = document.createElement("button");
+      loadButton.textContent = `Load: ${game.name || `Game ${index + 1}`}`;
+      loadButton.onclick = () => loadSavedGame(index);
+      gameItem.appendChild(loadButton);
+
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete";
+      deleteButton.onclick = () => openMenu("deleteConfirmationPopup");
+      gameItem.appendChild(deleteButton);
+
+      savedGamesList.appendChild(gameItem);
     });
 
-    if (availableCharacters.length > 0) {
-      pauseTimer();
+    savedGamesPopup.style.display = "flex";
+    pauseTimer();
+  }
 
-      const randomChar =
-        availableCharacters[
-          Math.floor(Math.random() * availableCharacters.length)
-        ];
-      gameState.encounteredCharacters.push(randomChar.name);
+  if (menuId === "rulesPopup") {
+    document.getElementById("rulesPopup").style.display = "flex";
+  }
 
-      // get the number of encounters we've had with that specific character
-      const encounterCount =
-        gameState.encounteredCharacters[randomChar.name] || 0;
+  if (menuId === "nameSavePopup") {
+    document.getElementById("nameSavePopup").style.display = "flex";
+  }
 
-      // increment the number of encounters
-      gameState.encounteredCharacters[randomChar.name] = encounterCount + 1;
+  if (menuId === "deleteConfirmationPopup") {
+    document.getElementById("deleteConfirmationPopup").style.display = "flex";
+  }
 
-      const eventPopup = document.getElementById("eventPopup");
-      const dialogueName = document.getElementById("dialogue-name");
-      const dialogueText = document.getElementById("dialogue-text");
-      const dialogueOptions = document.getElementById("dialogue-options");
-      const characterIcon = document.getElementById("characterIcon");
+  if (menuId === "newGameConfirmationPopup") {
+    document.getElementById("newGameConfirmationPopup").style.display = "flex";
+  }
 
-      // Function to display dialogue and options
-      const displayDialogue = (dialogue) => {
-        dialogueName.textContent = randomChar.name;
-        dialogueText.textContent = dialogue.text;
+  if (menuId === "upgradesPopup") {
+    document.getElementById("upgradesPopup").style.display = "flex";
+  }
 
-        // Update the character icon
-        characterIcon.src = randomChar.icon; // Set the src attribute
-        characterIcon.alt = `${randomChar.name} icon`; // Update the alt text
-
-        dialogueOptions.innerHTML = "";
-
-        if (dialogue.responses) {
-          dialogue.responses.forEach((response) => {
-            const button = document.createElement("button");
-            button.textContent = response.text;
-            button.addEventListener("click", () => {
-              if (response.action) {
-                response.action();
-                setTimeout(() => {
-                  closeSpecialEvent();
-                }, 500);
-              } else if (response.next) {
-                displayDialogue(response.next);
-              } else {
-                closeSpecialEvent();
-              }
-            });
-            dialogueOptions.appendChild(button);
-          });
-        }
-      };
-
-      // Start the dialogue
-      displayDialogue(randomChar.encounters[encounterCount]);
-
-      // for special cases you may need to filter them out of this logic
-      // example, if encounter.shop, then filter out
-      // also consider when your characters are in shop
-
-      eventPopup.style.display = "flex";
-      playSound(randomChar.music);
-    }
+  if (menuId === "eventPopup") {
+    document.getElementById("eventPopup").style.display = "flex";
   }
 }
 
-function closeSpecialEvent() {
-  const eventPopup = document.getElementById("eventPopup");
-  eventPopup.style.display = "none";
-  resumeTimer();
-}
+function closeMenu(menuId) {
+  document.getElementById(menuId).style.display = "none";
 
-function tradeEggsForSticks() {
-  if (gameState.playerAntHill.resources.eggs >= 1) {
-    gameState.playerAntHill.resources.eggs -= 1;
-    gameState.playerAntHill.resources.sticks += 10;
-    addToLog("You traded an egg for 10 sticks.");
-  } else {
-    addToLog("Not enough eggs to trade.");
+  if (menuId === "merchantPopup") {
+    document.getElementById("shopPopup").style.display = "flex";
   }
-  updateResourceStats();
-}
 
-function spiderAttack() {
-  gameState.playerAntHill.ants.warriors -= 10;
-  if (gameState.playerAntHill.ants.warriors < 0) {
-    gameState.playerAntHill.ants.warriors = 0;
+  if (menuId === "shopPopup") {
+    resumeTimer();
+    menuButtonOff();
   }
-  updateResourceStats();
-  addToLog(
-    "In only a fraction of a second, Angoliant ripped apart and ate all 10 of the warrior ants!"
-  );
 
-  // AXE ME
-  // document.getElementById("workerCount").textContent =
-  //   gameState.playerAntHill.ants.workers;
-  closeSpecialEvent();
-}
+  if (menuId === "spiderPopup") {
+    
+  }
 
-function heraclesCrying() {
-  gameState.playerAntHill.resources.sticks += 10;
+  if (menuId === "heraclesPopup") {
+    
+  }
 
-  addToLog("Heracles ran away crying... But he dropped some sticks!");
-  closeSpecialEvent();
-}
-
-function spiderInCamp() {
-  addToLog(
-    "We may have made a deal with the devil today... But if it gives us the power to crush the Enemy, then so be it."
-  );
-  if (!gameState.spiderInCamp) {
-    gameState.spiderInCamp = true;
-    closeSpecialEvent();
+  if (menuId === "eventPopup") {
+    resumeTimer();
   }
 }
 
@@ -192,11 +193,17 @@ function openSpider() {
 function closeSpider() {
   document.getElementById("spiderPopup").style.display = "none";
 }
-function heraclesInCamp() {
-  if (!gameState.heraclesInCamp) {
-    gameState.heraclesInCamp = true;
-    closeSpecialEvent();
+
+function openHeracles() {
+  if (gameState.heraclesInCamp) {
+    document.getElementById("heraclesPopup").style.display = "flex";
   }
+
+  closeShop();
+}
+
+function closeHeracles() {
+  document.getElementById("heraclesPopup").style.display = "none";
 }
 
 function updateResourceStats() {
@@ -229,86 +236,8 @@ function updateResourceStats() {
   document.getElementById("enemyDefence").textContent = enemyDefence;
 }
 
-function openMenu() {
-  document.getElementById("menuPopup").style.display = "flex";
-  menuButtonOn();
-  pauseTimer();
-}
-
-function closeMenu() {
-  document.getElementById("menuPopup").style.display = "none";
-  menuButtonOff();
-  resumeTimer();
-}
-
-function openRules() {
-  document.getElementById("rulesPopup").style.display = "flex";
-}
-
-function closeRules() {
-  document.getElementById("rulesPopup").style.display = "none";
-}
-function openShop() {
-  document.getElementById("shopPopup").style.display = "flex";
-  pauseTimer();
-  menuButtonOn();
-}
-function openMerchants() {
-  document.getElementById("merchantPopup").style.display = "flex";
-
-  // typo merchantPopup
-  const merchantPopup = document.getElementById("merchantPopup");
-  merchantPopup.innerHTML = "";
-
-  if (gameState.spiderInCamp) {
-    const spiderButton = document.createElement("button");
-    spiderButton.textContent = "Angoliant the Terrible";
-    spiderButton.onclick = openSpider;
-    merchantPopup.appendChild(spiderButton);
-  }
-
-  if (gameState.heraclesInCamp) {
-    const heraclesButton = document.createElement("button");
-    heraclesButton.textContent = "Heracles the Mighty";
-    heraclesButton.onclick = openHeracles;
-    merchantPopup.appendChild(heraclesButton);
-  }
-
-  const closeButton = document.createElement("button");
-  closeButton.textContent = "Close";
-  closeButton.onclick = closeMerchants;
-  merchantPopup.appendChild(closeButton);
-
-  pauseTimer();
-}
-
-// close function... might be the move
-function closeMenuExample(menuId) {
-  document.getElementById(menuId).style.display = "none";
-
-  if (menuId === "merchantPopup") {
-    // do this
-  }
-
-  if (menuId === "shopPopup") {
-    // do this
-  }
-}
-
-function closeMerchants() {
-  document.getElementById("merchantPopup").style.display = "none";
-  document.getElementById("shopPopup").style.display = "flex";
-}
-
-function closeShop() {
-  document.getElementById("shopPopup").style.display = "none";
-  resumeTimer();
-  menuButtonOff();
-}
-
 function calculateCombatStats() {
   let enemyBaseAttack = gameState.playerAntHill.ants.enemy * 5;
-
   let enemyBaseDefence = gameState.playerAntHill.ants.enemy * 5;
 
   const enemyDefence = enemyBaseDefence * gameState.enemyDefenceMultiplier;
@@ -343,9 +272,21 @@ function upgradeAttack() {
   }
 }
 
+function upgradeDefence() {
+  if (gameState.playerAntHill.resources.sticks >= 100) {
+    gameState.defenceMultiplier += 0.5;
+    gameState.playerAntHill.resources.sticks -= 100;
+
+    console.log("Defence increased!");
+
+    calculateCombatStats();
+  } else {
+    console.log("Not enough sticks available!");
+  }
+}
+
 function startTimer() {
   if (!timerInterval) {
-    // Prevent multiple intervals from being created
     timerInterval = setInterval(() => {
       gameState.gameTimer += 1;
       document.getElementById("gameTimer").innerText = gameState.gameTimer;
@@ -365,34 +306,23 @@ function startTimer() {
   }
 }
 
-function checkVictory() {
-  if (gameState.playerAntHill.ants.enemy <= 0) {
-    triggerVictory();
+function pauseTimer() {
+  if (isTimerRunning) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isTimerRunning = false;
+    console.log("Timer Paused");
   }
 }
 
-function checkDefeat() {
-  if (
-    gameState.playerAntHill.ants.workers <= 0 &&
-    gameState.playerAntHill.ants.warriors <= 0 &&
-    gameState.playerAntHill.ants.guards <= 0
-  ) {
-    triggerDefeat();
-  }
-  if (gameState.playerAntHill.ants.enemy >= 999) {
-    triggerDefeat();
+function resumeTimer() {
+  if (!isTimerRunning) {
+    isTimerRunning = true;
+    startTimer();
+    console.log("Timer Resumed");
   }
 }
 
-function triggerVictory() {
-  addToLog("Victory! You have defeated all enemy ants!");
-  pauseTimer();
-}
-
-function triggerDefeat() {
-  addToLog("Defeat! All your ants have been eliminated.");
-  pauseTimer();
-}
 function everySecondEvents() {
   gameState.playerAntHill.ants.enemy++;
   gameState.playerAntHill.resources.eggs++;
@@ -414,6 +344,7 @@ function everySecondEvents() {
   checkVictory();
   checkDefeat();
 }
+
 function everyTenSecondEvents() {
   stickGathered();
   foodCost();
@@ -502,6 +433,7 @@ function triggerRaid() {
     updateRaidButton();
   }
 }
+
 function foodCost() {
   let workers = gameState.playerAntHill.ants.workers;
   let guards = gameState.playerAntHill.ants.guards;
@@ -571,22 +503,6 @@ function playSound(sound) {
   }
   sound.currentTime = 0;
   sound.play();
-}
-
-function pauseTimer() {
-  if (isTimerRunning) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    isTimerRunning = false;
-    console.log("Timer Paused");
-  }
-}
-function resumeTimer() {
-  if (!isTimerRunning) {
-    isTimerRunning = true;
-    startTimer();
-    console.log("Timer Resumed");
-  }
 }
 
 function addToLog(message) {
@@ -759,6 +675,7 @@ function loadGame() {
 function openNewGameConfirmationPopup() {
   document.getElementById("newGameConfirmationPopup").style.display = "flex";
 }
+
 function closeNewGameConfirmationPopup() {
   document.getElementById("newGameConfirmationPopup").style.display = "none";
 }
@@ -768,6 +685,7 @@ function confirmNewGame() {
   closeNewGameConfirmationPopup();
   closeMenu();
 }
+
 function openSavedGamesPopup() {
   const savedGamesPopup = document.getElementById("savedGamesPopup");
   const savedGamesList = document.getElementById("savedGamesList");
@@ -787,7 +705,7 @@ function openSavedGamesPopup() {
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
-    deleteButton.onclick = () => openDeleteConfirmationPopup(index);
+    deleteButton.onclick = () => openMenu("deleteConfirmationPopup");
     gameItem.appendChild(deleteButton);
 
     savedGamesList.appendChild(gameItem);
@@ -814,19 +732,6 @@ function loadSavedGame(index) {
   }
 }
 
-function deleteSavedGame(index) {
-  const savedGames =
-    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
-  if (savedGames[index]) {
-    const deletedGameName = savedGames[index].name;
-    savedGames.splice(index, 1);
-    localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
-    openSavedGamesPopup(); 
-    console.log(`Deleted saved game: ${deletedGameName}`);
-  } else {
-    console.log("No saved game found at index", index);
-  }
-}
 let saveGameIndexToDelete = null;
 
 function openNameSavePopup() {
@@ -867,6 +772,15 @@ function confirmDeleteGame() {
     closeDeleteConfirmationPopup();
   }
 }
+
+function deleteSavedGame(index) {
+  const savedGames =
+    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
+  savedGames.splice(index, 1);
+  localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
+  openSavedGamesPopup(); // Refresh the saved games list
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
   const buttons = document.querySelectorAll("button");
