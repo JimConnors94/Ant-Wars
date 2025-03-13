@@ -55,6 +55,11 @@ function initializeGameState() {
 }
 
 function openMenu(menuId) {
+
+  if (menuId === "menuPopup") {
+    document.getElementById("menuPopup").style.display = "flex";
+  }
+
   if (menuId === "merchantPopup") {
     document.getElementById("merchantPopup").style.display = "flex";
 
@@ -122,7 +127,10 @@ function openMenu(menuId) {
 
       const deleteButton = document.createElement("button");
       deleteButton.textContent = "Delete";
-      deleteButton.onclick = () => openMenu("deleteConfirmationPopup");
+      deleteButton.onclick = () => {
+        saveGameIndexToDelete = index; // Set the index to delete
+        openMenu("deleteConfirmationPopup"); // Open the confirmation popup
+      };
       gameItem.appendChild(deleteButton);
 
       savedGamesList.appendChild(gameItem);
@@ -169,41 +177,9 @@ function closeMenu(menuId) {
     menuButtonOff();
   }
 
-  if (menuId === "spiderPopup") {
-    
+  if (menuId === "deleteConfirmationPopup") {
+    saveGameIndexToDelete = null; 
   }
-
-  if (menuId === "heraclesPopup") {
-    
-  }
-
-  if (menuId === "eventPopup") {
-    resumeTimer();
-  }
-}
-
-function openSpider() {
-  if (gameState.spiderInCamp) {
-    document.getElementById("spiderPopup").style.display = "flex";
-  }
-
-  closeShop();
-}
-
-function closeSpider() {
-  document.getElementById("spiderPopup").style.display = "none";
-}
-
-function openHeracles() {
-  if (gameState.heraclesInCamp) {
-    document.getElementById("heraclesPopup").style.display = "flex";
-  }
-
-  closeShop();
-}
-
-function closeHeracles() {
-  document.getElementById("heraclesPopup").style.display = "none";
 }
 
 function updateResourceStats() {
@@ -639,6 +615,8 @@ function startNewGame() {
   startTimer();
   updateResourceStats();
   addToLog("New game started.");
+  closeMenu ('newGameConfirmationPopup');
+  closeMenu ('menuPopup');
 }
 
 function saveGame(saveFileName) {
@@ -661,6 +639,7 @@ function saveGame(saveFileName) {
 }
 
 function loadGame() {
+  
   const savedState = JSON.parse(localStorage.getItem("antWarsGameState"));
 
   if (savedState) {
@@ -672,51 +651,10 @@ function loadGame() {
   }
 }
 
-function openNewGameConfirmationPopup() {
-  document.getElementById("newGameConfirmationPopup").style.display = "flex";
-}
-
-function closeNewGameConfirmationPopup() {
-  document.getElementById("newGameConfirmationPopup").style.display = "none";
-}
-
 function confirmNewGame() {
   startNewGame();
   closeNewGameConfirmationPopup();
   closeMenu();
-}
-
-function openSavedGamesPopup() {
-  const savedGamesPopup = document.getElementById("savedGamesPopup");
-  const savedGamesList = document.getElementById("savedGamesList");
-  savedGamesList.innerHTML = "";
-
-  const savedGames =
-    JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
-
-  savedGames.forEach((game, index) => {
-    const gameItem = document.createElement("div");
-    gameItem.className = "saved-game-item";
-
-    const loadButton = document.createElement("button");
-    loadButton.textContent = `Load: ${game.name || `Game ${index + 1}`}`;
-    loadButton.onclick = () => loadSavedGame(index);
-    gameItem.appendChild(loadButton);
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.onclick = () => openMenu("deleteConfirmationPopup");
-    gameItem.appendChild(deleteButton);
-
-    savedGamesList.appendChild(gameItem);
-  });
-
-  savedGamesPopup.style.display = "flex";
-  pauseTimer();
-}
-
-function closeSavedGamesPopup() {
-  document.getElementById("savedGamesPopup").style.display = "none";
 }
 
 function loadSavedGame(index) {
@@ -725,7 +663,7 @@ function loadSavedGame(index) {
   if (savedGames[index]) {
     gameState = savedGames[index].state;
     updateResourceStats();
-    closeSavedGamesPopup();
+    closeMenu ("savedGamesPopup");
     console.log(`Loaded saved game: ${savedGames[index].name}`);
   } else {
     console.log("No saved game found at index", index);
@@ -733,14 +671,6 @@ function loadSavedGame(index) {
 }
 
 let saveGameIndexToDelete = null;
-
-function openNameSavePopup() {
-  document.getElementById("nameSavePopup").style.display = "flex";
-}
-
-function closeNameSavePopup() {
-  document.getElementById("nameSavePopup").style.display = "none";
-}
 
 function confirmSaveGame() {
   const saveFileNameInput = document.getElementById("saveFileNameInput");
@@ -752,34 +682,33 @@ function confirmSaveGame() {
   }
 
   saveGame(saveFileName);
-  closeNameSavePopup();
+  closeMenu ("nameSavePopup");
   saveFileNameInput.value = "";
 }
 
-function openDeleteConfirmationPopup(index) {
-  saveGameIndexToDelete = index;
-  document.getElementById("deleteConfirmationPopup").style.display = "flex";
-}
 
-function closeDeleteConfirmationPopup() {
-  saveGameIndexToDelete = null;
-  document.getElementById("deleteConfirmationPopup").style.display = "none";
-}
 
 function confirmDeleteGame() {
   if (saveGameIndexToDelete !== null) {
     deleteSavedGame(saveGameIndexToDelete);
-    closeDeleteConfirmationPopup();
+    closeMenu("deleteConfirmationPopup");
+    openMenu("savedGamesPopup");
   }
 }
 
 function deleteSavedGame(index) {
   const savedGames =
     JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
-  savedGames.splice(index, 1);
-  localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
-  openSavedGamesPopup(); // Refresh the saved games list
+  if (index >= 0 && index < savedGames.length) {
+    savedGames.splice(index, 1); 
+    localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
+   
+    addToLog("Saved game deleted.");
+  } else {
+    addToLog("Error: Invalid game index.");
+  }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();
