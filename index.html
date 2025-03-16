@@ -35,8 +35,12 @@
         <div id="logArea"></div>
 
         <div>
-          <button id="shopButton" onclick="openMenu('shopPopup')">Open Shop</button>
-          <button id="menuButton" onclick="openMenu('menuPopup')">Main Menu</button>
+          <button id="shopButton" onclick="openMenu('shopPopup')">
+            Open Shop
+          </button>
+          <button id="menuButton" onclick="openMenu('menuPopup')">
+            Main Menu
+          </button>
         </div>
       </div>
 
@@ -70,12 +74,13 @@
         <p>Enemy: <span id="enemyCount">0</span></p>
         <p>Enemy Attack: <span id="enemyAttack">0</span></p>
         <p>Enemy Defence: <span id="enemyDefence">0</span></p>
-        
       </div>
 
       <div id="menuPopup" class="popup">
         <button onclick="openMenu('rulesPopup')">Game Rules</button>
-        <button onclick="openMenu('newGameConfirmationPopup')">Start New Game</button>
+        <button onclick="openMenu('newGameConfirmationPopup')">
+          Start New Game
+        </button>
         <button onclick="openMenu('nameSavePopup')">Save Game</button>
         <button onclick="openMenu('savedGamesPopup')">Load Game</button>
         <button onclick="closeMenu('menuPopup')">Close</button>
@@ -99,8 +104,6 @@
 
       <div id="shopPopup" class="popup">
         <button onclick="openMenu('upgradesPopup')">Upgrades</button>
-        <button onclick="upgradeAttack()">Upgrade Attack</button>
-        <button onclick="upgradeDefence()">Upgrade Defence</button>
         <button onclick="openMenu('merchantPopup')">Merchants</button>
         <button onclick="closeMenu('shopPopup')">Close</button>
       </div>
@@ -173,41 +176,40 @@
         <div>
           <div>
             <div>Attack</div>
-            <button>Level 1</button>
-            <button>Level 2</button>
-            <div>
-              <button></button>
-              <button></button>
-            </div>
-            <button></button>
-            <button></button>
-            <div>
-              <button></button>
-              <button></button>
-            </div>
+            <button id="attackLevel1" onclick="upgradeAttack()">Level 1</button>
+            <button id="attackLevel2" onclick="upgradeAttack()">Level 2</button>
+            <button id="attackLevel3" onclick="upgradeAttack()">Level 3</button>
+            <button id="attackLevel4" onclick="upgradeAttack()">Level 4</button>
+            <button id="attackLevel5" onclick="upgradeAttack()">Level 5</button>
+            <button id="attackLevel6" onclick="upgradeAttack()">Level 6</button>
+            <button id="attackLevel7" onclick="upgradeAttack()">Level 7</button>
+            <button id="attackLevel8" onclick="upgradeAttack()">Level 8</button>
+            <button id="attackLevel9" onclick="upgradeAttack()">Level 9</button>
+            <button id="attackLevel10" onclick="upgradeAttack()">Level 10</button>
           </div>
           <div>
-            <div>Defense</div>
-            <button></button>
-            <button></button>
-            <div>
-              <button></button>
-              <button></button>
-            </div>
-            <button></button>
-            <button></button>
-            <div>
-              <button></button>
-              <button></button>
-            </div>
+            <div>Defence</div>
+            <button id="defenceLevel1" onclick="upgradeDefence()">Level 1</button>
+            <button id="defenceLevel2" onclick="upgradeDefence()">Level 2</button>
+            <button id="defenceLevel3" onclick="upgradeDefence()">Level 3</button>
+            <button id="defenceLevel4" onclick="upgradeDefence()">Level 4</button>
+            <button id="defenceLevel5" onclick="upgradeDefence()">Level 5</button>
+            <button id="defenceLevel6" onclick="upgradeDefence()">Level 6</button>
+            <button id="defenceLevel7" onclick="upgradeDefence()">Level 7</button>
+            <button id="defenceLevel8" onclick="upgradeDefence()">Level 8</button>
+            <button id="defenceLevel9" onclick="upgradeDefence()">Level 9</button>
+            <button id="defenceLevel10" onclick="upgradeDefence()">Level 10</button>
           </div>
+          <button onclick="closeMenu('upgradesPopup')">Cancel</button>
         </div>
       </div>
-    </div>
+      
+     
+    
+    
+
 
     <script src="scripts.js"></script>
     <script src="characters.js"></script>
   </body>
 </html>
-
-

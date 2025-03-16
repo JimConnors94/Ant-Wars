@@ -6,6 +6,8 @@ const defaultGameState = {
   raidAvailable: false,
   spiderInCamp: false,
   encounteredCharacters: [],
+  attackUpgrades: 0,
+  defenceUpgrades: 0,
 
   attackMultiplier: 1,
   defenceMultiplier: 1,
@@ -17,7 +19,7 @@ const defaultGameState = {
   playerAntHill: {
     resources: {
       eggs: 0,
-      sticks: 1000,
+      sticks: 100000,
       food: 10000,
       shinyRocks: 0,
     },
@@ -50,14 +52,102 @@ function initializeGameState() {
   calculateCombatStats();
   updateRaidButton();
   startTimer();
+  menuButtonOn();
+  updateUpgradeMenu();
 
   console.log(savedState ? "Loaded saved game." : "Starting a new game.");
 }
 
-function openMenu(menuId) {
+function openSpecialEvent() {
+  if (Math.random() < 0.01) {
+    const availableCharacters = characters.filter((char) => {
+      // get the number of encounters had
+      const encounterCount = gameState.encounteredCharacters[char.name] || 0;
+      // if the user had less encounters than the amount of encounters available
+      // we leave that character in available characters
+      return encounterCount < char.encounters.length;
+    });
 
+    const randomChar =
+      availableCharacters[
+        Math.floor(Math.random() * availableCharacters.length)
+      ];
+    gameState.encounteredCharacters.push(randomChar.name);
+
+    // get the number of encounters we've had with that specific character
+    const encounterCount =
+      gameState.encounteredCharacters[randomChar.name] || 0;
+
+    // increment the number of encounters
+    gameState.encounteredCharacters[randomChar.name] = encounterCount + 1;
+
+    const eventPopup = document.getElementById("eventPopup");
+    const dialogueName = document.getElementById("dialogue-name");
+    const dialogueText = document.getElementById("dialogue-text");
+    const dialogueOptions = document.getElementById("dialogue-options");
+    const characterIcon = document.getElementById("characterIcon");
+
+    // Function to display dialogue and options
+    const displayDialogue = (dialogue) => {
+      dialogueName.textContent = randomChar.name;
+      dialogueText.textContent = dialogue.text;
+
+      // Update the character icon
+      characterIcon.src = randomChar.icon; // Set the src attribute
+      characterIcon.alt = `${randomChar.name} icon`; // Update the alt text
+
+      dialogueOptions.innerHTML = "";
+
+      if (dialogue.responses) {
+        dialogue.responses.forEach((response) => {
+          const button = document.createElement("button");
+          button.textContent = response.text;
+          button.addEventListener("click", () => {
+            if (response.action) {
+              response.action();
+              setTimeout(() => {
+                closeSpecialEvent();
+              }, 500);
+            } else if (response.next) {
+              displayDialogue(response.next);
+            } else {
+              closeSpecialEvent();
+            }
+          });
+          dialogueOptions.appendChild(button);
+        });
+      }
+    };
+    const merchantPopup = document.getElementById("merchantPopup");
+    merchantPopup.innerHTML = "";
+
+    if (gameState.spiderInCamp) {
+      const spiderButton = document.createElement("button");
+      spiderButton.textContent = "Angoliant the Terrible";
+      spiderButton.onclick = () => openMenu("spiderPopup");
+      merchantPopup.appendChild(spiderButton);
+    }
+
+    if (gameState.heraclesInCamp) {
+      const heraclesButton = document.createElement("button");
+      heraclesButton.textContent = "Heracles the Mighty";
+      heraclesButton.onclick = () => openMenu("heraclesPopup");
+      merchantPopup.appendChild(heraclesButton);
+    }
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.onclick = () => closeMenu("merchantPopup");
+    merchantPopup.appendChild(closeButton);
+
+    pauseTimer();
+  }
+}
+
+function openMenu(menuId) {
   if (menuId === "menuPopup") {
     document.getElementById("menuPopup").style.display = "flex";
+    menuButtonOn();
   }
 
   if (menuId === "merchantPopup") {
@@ -158,6 +248,7 @@ function openMenu(menuId) {
 
   if (menuId === "upgradesPopup") {
     document.getElementById("upgradesPopup").style.display = "flex";
+    updateUpgradeMenu();
   }
 
   if (menuId === "eventPopup") {
@@ -178,7 +269,12 @@ function closeMenu(menuId) {
   }
 
   if (menuId === "deleteConfirmationPopup") {
-    saveGameIndexToDelete = null; 
+    saveGameIndexToDelete = null;
+  }
+
+  if (menuId === "menuPopup") {
+    resumeTimer();
+    menuButtonOff();
   }
 }
 
@@ -236,31 +332,92 @@ function calculateCombatStats() {
 }
 
 function upgradeAttack() {
-  if (gameState.playerAntHill.resources.sticks >= 100) {
+  let attackLevel = gameState.attackUpgrades;
+  let nextLevel = attackLevel + 1;
+  let cost = 100 * nextLevel;
+  console.log (cost);
+  console.log (nextLevel);
+  console.log (attackLevel);
+  console.log (gameState.enemyAttackMultiplier);
+  console.log (gameState.attackUpgrades);
+
+  if (gameState.playerAntHill.resources.sticks >= cost && nextLevel <= 10) {
     gameState.attackMultiplier += 0.5;
-    gameState.playerAntHill.resources.sticks -= 100;
+    gameState.attackUpgrades += 1;
+    gameState.playerAntHill.resources.sticks -= cost;
 
-    console.log("Attack increased!");
+    console.log(`Attack increased to Level ${nextLevel}!`);
 
+    updateUpgradeMenu();
     calculateCombatStats();
+  } else if (nextLevel > 10) {
+    console.log("Maximum attack level reached!");
   } else {
     console.log("Not enough sticks available!");
   }
 }
-
 function upgradeDefence() {
-  if (gameState.playerAntHill.resources.sticks >= 100) {
+  const nextLevel = gameState.defenceUpgrades + 1;
+  const cost = 100 * nextLevel;
+
+  if (gameState.playerAntHill.resources.sticks >= cost && nextLevel <= 10) {
     gameState.defenceMultiplier += 0.5;
-    gameState.playerAntHill.resources.sticks -= 100;
+    gameState.defenceUpgrades += 1;
+    gameState.playerAntHill.resources.sticks -= cost;
 
-    console.log("Defence increased!");
+    console.log(`Defence increased to Level ${nextLevel}!`);
 
+    updateUpgradeMenu();
     calculateCombatStats();
+  } else if (nextLevel > 10) {
+    console.log("Maximum defence level reached!");
   } else {
     console.log("Not enough sticks available!");
   }
 }
 
+function updateUpgradeMenu() {
+  const attackUpgrades = gameState.attackUpgrades || 0;
+  const defenceUpgrades = gameState.defenceUpgrades || 0;
+
+  console.log("Attack Upgrades:", attackUpgrades);
+  console.log("Defence Upgrades:", defenceUpgrades);
+  console.log(gameState.playerAntHill.resources.sticks);
+
+  // Update Attack Buttons
+  for (let i = 1; i <= 10; i++) {
+    const attackButton = document.getElementById(`attackLevel${i}`);
+    if (attackButton) {
+      if (i <= attackUpgrades) {
+        attackButton.textContent = `Level ${i} (Purchased)`;
+        attackButton.disabled = true;
+      } else if (i === attackUpgrades + 1) {
+        attackButton.textContent = `Level ${i} (Cost: ${100 * i} sticks)`;
+        attackButton.disabled = false;
+      } else {
+        attackButton.textContent = `Level ${i} (Locked)`;
+        attackButton.disabled = true;
+      }
+    }
+  }
+
+ 
+  for (let i = 1; i <= 10; i++) {
+    const defenceButton = document.getElementById(`defenceLevel${i}`);
+    if (defenceButton) {
+      if (i <= defenceUpgrades) {
+        defenceButton.textContent = `Level ${i} (Purchased)`;
+        defenceButton.disabled = true;
+      } else if (i === defenceUpgrades + 1) {
+        defenceButton.textContent = `Level ${i} (Cost: ${100 * i} sticks)`;
+        defenceButton.disabled = false;
+      } else {
+        defenceButton.textContent = `Level ${i} (Locked)`;
+        defenceButton.disabled = true;
+      }
+    }
+  }
+}
 function startTimer() {
   if (!timerInterval) {
     timerInterval = setInterval(() => {
@@ -615,8 +772,8 @@ function startNewGame() {
   startTimer();
   updateResourceStats();
   addToLog("New game started.");
-  closeMenu ('newGameConfirmationPopup');
-  closeMenu ('menuPopup');
+  closeMenu("newGameConfirmationPopup");
+  closeMenu("menuPopup");
 }
 
 function saveGame(saveFileName) {
@@ -639,7 +796,6 @@ function saveGame(saveFileName) {
 }
 
 function loadGame() {
-  
   const savedState = JSON.parse(localStorage.getItem("antWarsGameState"));
 
   if (savedState) {
@@ -663,7 +819,8 @@ function loadSavedGame(index) {
   if (savedGames[index]) {
     gameState = savedGames[index].state;
     updateResourceStats();
-    closeMenu ("savedGamesPopup");
+    closeMenu("savedGamesPopup");
+    closeMenu("menuPopup");
     console.log(`Loaded saved game: ${savedGames[index].name}`);
   } else {
     console.log("No saved game found at index", index);
@@ -682,11 +839,9 @@ function confirmSaveGame() {
   }
 
   saveGame(saveFileName);
-  closeMenu ("nameSavePopup");
+  closeMenu("nameSavePopup");
   saveFileNameInput.value = "";
 }
-
-
 
 function confirmDeleteGame() {
   if (saveGameIndexToDelete !== null) {
@@ -700,15 +855,14 @@ function deleteSavedGame(index) {
   const savedGames =
     JSON.parse(localStorage.getItem("antWarsSavedGames")) || [];
   if (index >= 0 && index < savedGames.length) {
-    savedGames.splice(index, 1); 
+    savedGames.splice(index, 1);
     localStorage.setItem("antWarsSavedGames", JSON.stringify(savedGames));
-   
+
     addToLog("Saved game deleted.");
   } else {
     addToLog("Error: Invalid game index.");
   }
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeGameState();

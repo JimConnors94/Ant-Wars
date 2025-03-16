@@ -162,7 +162,7 @@ button.disable {
   flex-direction: column;
   width: 100%;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(1, 4, 19);
   align-items: center;
   justify-content: center;
 }
