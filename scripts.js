@@ -5,9 +5,12 @@ const defaultGameState = {
   gameTimer: 0,
   raidAvailable: false,
   spiderInCamp: false,
+  mantisInCamp: false,
   encounteredCharacters: [],
   attackUpgrades: 0,
   defenceUpgrades: 0,
+
+  test: 1,
 
   attackMultiplier: 1,
   defenceMultiplier: 1,
@@ -59,89 +62,176 @@ function initializeGameState() {
 }
 
 function openSpecialEvent() {
-  if (Math.random() < 0.01) {
+  if (Math.random() < 0.9) {
     const availableCharacters = characters.filter((char) => {
-      // get the number of encounters had
       const encounterCount = gameState.encounteredCharacters[char.name] || 0;
-      // if the user had less encounters than the amount of encounters available
-      // we leave that character in available characters
-      return encounterCount < char.encounters.length;
+      const canAppear = encounterCount < char.encounters.length;
+
+      // For Mantissa, only allow her to appear if Mantis is in the camp
+      if (char.name === "Mantissa the Fierce") {
+        return canAppear && gameState.mantisInCamp;
+      }
+
+      return canAppear;
     });
 
-    const randomChar =
-      availableCharacters[
-        Math.floor(Math.random() * availableCharacters.length)
-      ];
-    gameState.encounteredCharacters.push(randomChar.name);
+    if (availableCharacters.length > 0) {
+      const randomChar =
+        availableCharacters[
+          Math.floor(Math.random() * availableCharacters.length)
+        ];
+      gameState.encounteredCharacters.push(randomChar.name);
 
-    // get the number of encounters we've had with that specific character
-    const encounterCount =
-      gameState.encounteredCharacters[randomChar.name] || 0;
+      const encounterCount =
+        gameState.encounteredCharacters[randomChar.name] || 0;
+      gameState.encounteredCharacters[randomChar.name] = encounterCount + 1;
 
-    // increment the number of encounters
-    gameState.encounteredCharacters[randomChar.name] = encounterCount + 1;
+      const eventPopup = document.getElementById("eventPopup");
+      const dialogueName = document.getElementById("dialogue-name");
+      const dialogueText = document.getElementById("dialogue-text");
+      const dialogueOptions = document.getElementById("dialogue-options");
+      const characterIcon = document.getElementById("characterIcon");
 
-    const eventPopup = document.getElementById("eventPopup");
-    const dialogueName = document.getElementById("dialogue-name");
-    const dialogueText = document.getElementById("dialogue-text");
-    const dialogueOptions = document.getElementById("dialogue-options");
-    const characterIcon = document.getElementById("characterIcon");
+      const displayDialogue = (dialogue) => {
+        dialogueName.textContent = randomChar.name;
+        dialogueText.textContent = dialogue.text;
 
-    // Function to display dialogue and options
-    const displayDialogue = (dialogue) => {
-      dialogueName.textContent = randomChar.name;
-      dialogueText.textContent = dialogue.text;
+        characterIcon.src = randomChar.icon;
+        characterIcon.alt = `${randomChar.name} icon`;
 
-      // Update the character icon
-      characterIcon.src = randomChar.icon; // Set the src attribute
-      characterIcon.alt = `${randomChar.name} icon`; // Update the alt text
+        dialogueOptions.innerHTML = "";
 
-      dialogueOptions.innerHTML = "";
-
-      if (dialogue.responses) {
-        dialogue.responses.forEach((response) => {
-          const button = document.createElement("button");
-          button.textContent = response.text;
-          button.addEventListener("click", () => {
-            if (response.action) {
-              response.action();
-              setTimeout(() => {
+        if (dialogue.responses) {
+          dialogue.responses.forEach((response) => {
+            const button = document.createElement("button");
+            button.textContent = response.text;
+            button.addEventListener("click", () => {
+              if (response.action) {
+                response.action();
+                setTimeout(() => {
+                  closeSpecialEvent();
+                }, 500);
+              } else if (response.next) {
+                displayDialogue(response.next);
+              } else {
                 closeSpecialEvent();
-              }, 500);
-            } else if (response.next) {
-              displayDialogue(response.next);
-            } else {
-              closeSpecialEvent();
-            }
+              }
+            });
+            dialogueOptions.appendChild(button);
           });
-          dialogueOptions.appendChild(button);
-        });
-      }
-    };
-    const merchantPopup = document.getElementById("merchantPopup");
-    merchantPopup.innerHTML = "";
+        }
+      };
 
-    if (gameState.spiderInCamp) {
-      const spiderButton = document.createElement("button");
-      spiderButton.textContent = "Angoliant the Terrible";
-      spiderButton.onclick = () => openMenu("spiderPopup");
-      merchantPopup.appendChild(spiderButton);
+      displayDialogue(randomChar.encounters[encounterCount]);
+
+      eventPopup.style.display = "flex";
+      pauseTimer();
     }
-
-    if (gameState.heraclesInCamp) {
-      const heraclesButton = document.createElement("button");
-      heraclesButton.textContent = "Heracles the Mighty";
-      heraclesButton.onclick = () => openMenu("heraclesPopup");
-      merchantPopup.appendChild(heraclesButton);
-    }
-
-    const closeButton = document.createElement("button");
-    closeButton.textContent = "Close";
-    closeButton.onclick = () => closeMenu("merchantPopup");
-    merchantPopup.appendChild(closeButton);
-
-    pauseTimer();
   }
+}
+
+function mantissaFindsMantis() {
+  if (gameState.mantisInCamp) {
+    gameState.mantisInCamp = false;
+    gameState.mantissaInCamp = true; 
+    addToLog("Mantissa found Mantis and dragged him away. Maybe we should check on him later...");
+    closeMenu("eventPopup");
+  }
+}
+
+function mantissaAttack() {
+  const { enemyAttack, playerDefence } = calculateCombatStats();
+  let antLoss = Math.round((10000) / playerDefence);
+
+  playSound(enemyRaid);
+  addToLog("Mantissa attacked your colony in a fit of rage!");
+  addToLog(`${antLoss + 1} ants were killed!`);
+
+  while (antLoss > 0) {
+    if (
+      gameState.playerAntHill.ants.guards > 0 &&
+      gameState.playerAntHill.ants.warriors > 0
+    ) {
+      if (Math.random() < 0.5) {
+        gameState.playerAntHill.ants.guards -= 1;
+        antLoss -= 1;
+      } else {
+        gameState.playerAntHill.ants.warriors -= 1;
+      }
+    } else if (gameState.playerAntHill.ants.guards > 0) {
+      gameState.playerAntHill.ants.guards -= 1;
+      antLoss -= 1;
+    } else if (gameState.playerAntHill.ants.warriors > 0) {
+      gameState.playerAntHill.ants.warriors -= 1;
+      antLoss -= 1;
+    } else {
+      gameState.playerAntHill.ants.workers -= 1;
+      antLoss -= 1;
+    }
+  }
+
+  closeMenu("eventPopup");
+}
+
+function spiderAttack() {
+  gameState.playerAntHill.ants.warriors -= 10;
+  if (gameState.playerAntHill.ants.warriors < 0) {
+    gameState.playerAntHill.ants.warriors = 0;
+  }
+}
+
+function heraclesInCamp() {
+  gameState.heraclesInCamp = true;
+  addToLog(
+    "Heracles the Mighty has joined your camp. He will trade sticks for ant eggs."
+  );
+  closeMenu("heraclesPopup");
+}
+
+function heraclesCrying() {
+  addToLog(
+    "Heracles is crying because you rejected his offer. He leaves in disappointment."
+  );
+  closeMenu("heraclesPopup");
+}
+
+function tradeEggsForSticks() {
+  if (gameState.playerAntHill.resources.eggs >= 10) {
+    gameState.playerAntHill.resources.eggs -= 10;
+    gameState.playerAntHill.resources.sticks += 100;
+    addToLog("You traded 10 eggs for 100 sticks with Heracles.");
+  } else {
+    addToLog("Not enough eggs to trade with Heracles.");
+  }
+  updateResourceStats();
+}
+
+function mantisInCamp() {
+  gameState.mantisInCamp = true;
+  addToLog("Mantis the Elusive has joined your camp. He will teach your warriors advanced techniques.");
+  closeMenu("eventPopup");
+}
+
+function mantisFlees() {
+  addToLog("Mantis the Elusive flees in panic...");
+  closeMenu("eventPopup");
+}
+
+function caterpillarInCamp() {
+  gameState.caterpillarInCamp = true;
+  addToLog("Caterpillar the Silkweaver has joined your camp. She will trade silk for food.");
+  closeMenu("eventPopup");
+}
+
+function caterpillarLeaves() {
+  addToLog("Caterpillar the Silkweaver leaves, disappointed by your rejection.");
+  closeMenu("eventPopup");
+}
+
+function spiderInCamp() {
+  gameState.spiderInCamp = true;
+  addToLog("Angoliant the Terrible has told you the location of her dark liar... She will provide power in exchange for sacrifices.");
+  closeMenu("eventPopup");
 }
 
 function openMenu(menuId) {
@@ -156,6 +246,7 @@ function openMenu(menuId) {
     const merchantPopup = document.getElementById("merchantPopup");
     merchantPopup.innerHTML = "";
 
+    // Add Angoliant the Terrible 
     if (gameState.spiderInCamp) {
       const spiderButton = document.createElement("button");
       spiderButton.textContent = "Angoliant the Terrible";
@@ -163,6 +254,7 @@ function openMenu(menuId) {
       merchantPopup.appendChild(spiderButton);
     }
 
+    // Add Heracles the Mighty 
     if (gameState.heraclesInCamp) {
       const heraclesButton = document.createElement("button");
       heraclesButton.textContent = "Heracles the Mighty";
@@ -170,6 +262,31 @@ function openMenu(menuId) {
       merchantPopup.appendChild(heraclesButton);
     }
 
+    // Add Mantis the Elusive
+    if (gameState.mantisInCamp) {
+      const mantisButton = document.createElement("button");
+      mantisButton.textContent = "Mantis the Elusive";
+      mantisButton.onclick = () => openMenu("mantisPopup");
+      merchantPopup.appendChild(mantisButton);
+    }
+
+    // Add Mantissa the Fierce 
+    if (gameState.mantissaInCamp) {
+      const mantissaButton = document.createElement("button");
+      mantissaButton.textContent = "Mantissa the Fierce";
+      mantissaButton.onclick = () => openMenu("mantissaPopup");
+      merchantPopup.appendChild(mantissaButton);
+    }
+
+    // Add Caterpillar the Silkweaver 
+    if (gameState.caterpillarInCamp) {
+      const caterpillarButton = document.createElement("button");
+      caterpillarButton.textContent = "Caterpillar the Silkweaver";
+      caterpillarButton.onclick = () => openMenu("caterpillarPopup");
+      merchantPopup.appendChild(caterpillarButton);
+    }
+
+    
     const closeButton = document.createElement("button");
     closeButton.textContent = "Close";
     closeButton.onclick = () => closeMenu("merchantPopup");
@@ -188,14 +305,35 @@ function openMenu(menuId) {
     if (gameState.spiderInCamp) {
       document.getElementById("spiderPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); // Close the shop when opening the spider popup
+    closeMenu("shopPopup"); 
   }
 
   if (menuId === "heraclesPopup") {
     if (gameState.heraclesInCamp) {
       document.getElementById("heraclesPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); // Close the shop when opening the Heracles popup
+    closeMenu("shopPopup"); 
+  }
+
+  if (menuId === "mantisPopup") {
+    if (gameState.mantisInCamp) {
+      document.getElementById("mantisPopup").style.display = "flex";
+    }
+    closeMenu("shopPopup"); 
+  }
+
+  if (menuId === "mantissaPopup") {
+    if (gameState.mantissaInCamp) {
+      document.getElementById("mantissaPopup").style.display = "flex";
+    }
+    closeMenu("shopPopup"); 
+  }
+
+  if (menuId === "caterpillarPopup") {
+    if (gameState.caterpillarInCamp) {
+      document.getElementById("caterpillarPopup").style.display = "flex";
+    }
+    closeMenu("shopPopup"); 
   }
 
   if (menuId === "savedGamesPopup") {
@@ -335,11 +473,12 @@ function upgradeAttack() {
   let attackLevel = gameState.attackUpgrades;
   let nextLevel = attackLevel + 1;
   let cost = 100 * nextLevel;
-  console.log (cost);
-  console.log (nextLevel);
-  console.log (attackLevel);
-  console.log (gameState.enemyAttackMultiplier);
-  console.log (gameState.attackUpgrades);
+  console.log(cost);
+  console.log(nextLevel);
+  console.log(attackLevel);
+  console.log(gameState.enemyAttackMultiplier);
+  console.log(gameState.attackUpgrades);
+  console.log(gameState.test);
 
   if (gameState.playerAntHill.resources.sticks >= cost && nextLevel <= 10) {
     gameState.attackMultiplier += 0.5;
@@ -401,7 +540,6 @@ function updateUpgradeMenu() {
     }
   }
 
- 
   for (let i = 1; i <= 10; i++) {
     const defenceButton = document.getElementById(`defenceLevel${i}`);
     if (defenceButton) {
@@ -647,6 +785,33 @@ function addToLog(message) {
   logArea.appendChild(logEntry);
 
   logArea.scrollTop = logArea.scrollHeight;
+}
+function triggerVictory() {
+  addToLog("Victory! You have defeated all enemy ants!");
+  pauseTimer();
+}
+
+function triggerDefeat() {
+  addToLog("Defeat! All your ants have been eliminated.");
+  pauseTimer();
+}
+
+function checkVictory() {
+  if (gameState.playerAntHill.ants.enemy <= 0) {
+    triggerVictory();
+  }
+}
+function checkDefeat() {
+  if (
+    gameState.playerAntHill.ants.workers <= 0 &&
+    gameState.playerAntHill.ants.warriors <= 0 &&
+    gameState.playerAntHill.ants.guards <= 0
+  ) {
+    triggerDefeat();
+  }
+  if (gameState.playerAntHill.ants.enemy >= 999) {
+    triggerDefeat();
+  }
 }
 
 function hatchAnt(type) {

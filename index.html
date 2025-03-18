@@ -14,9 +14,10 @@
     <audio id="raidFailed" src="audio/Raid Failed.wav"></audio>
     <h1></h1>
     <div class="container">
+      <!-- Left Panel -->
       <div class="left-panel">
         <div class="logo">
-          <img src="img/ANTWARS.png" alt="Antwars title" ; />
+          <img src="img/ANTWARS.png" alt="Antwars title" />
         </div>
 
         <div id="buttons">
@@ -44,6 +45,7 @@
         </div>
       </div>
 
+      <!-- Center Panel -->
       <div class="center-panel">
         <div class="timer">
           <p>Timer</p>
@@ -58,7 +60,7 @@
 
           <div class="resource-panel">
             <p>Food: <span id="foodCount">0</span></p>
-            <p>Eggs: &nbsp;<span id="eggCount">0</span></p>
+            <p>Eggs: <span id="eggCount">0</span></p>
             <p>Sticks: <span id="stickCount">0</span></p>
           </div>
         </div>
@@ -70,12 +72,14 @@
         </div>
       </div>
 
+      <!-- Right Panel -->
       <div class="right-panel">
         <p>Enemy: <span id="enemyCount">0</span></p>
         <p>Enemy Attack: <span id="enemyAttack">0</span></p>
         <p>Enemy Defence: <span id="enemyDefence">0</span></p>
       </div>
 
+      <!-- Popups -->
       <div id="menuPopup" class="popup">
         <button onclick="openMenu('rulesPopup')">Game Rules</button>
         <button onclick="openMenu('newGameConfirmationPopup')">
@@ -185,31 +189,49 @@
             <button id="attackLevel7" onclick="upgradeAttack()">Level 7</button>
             <button id="attackLevel8" onclick="upgradeAttack()">Level 8</button>
             <button id="attackLevel9" onclick="upgradeAttack()">Level 9</button>
-            <button id="attackLevel10" onclick="upgradeAttack()">Level 10</button>
+            <button id="attackLevel10" onclick="upgradeAttack()">
+              Level 10
+            </button>
           </div>
           <div>
             <div>Defence</div>
-            <button id="defenceLevel1" onclick="upgradeDefence()">Level 1</button>
-            <button id="defenceLevel2" onclick="upgradeDefence()">Level 2</button>
-            <button id="defenceLevel3" onclick="upgradeDefence()">Level 3</button>
-            <button id="defenceLevel4" onclick="upgradeDefence()">Level 4</button>
-            <button id="defenceLevel5" onclick="upgradeDefence()">Level 5</button>
-            <button id="defenceLevel6" onclick="upgradeDefence()">Level 6</button>
-            <button id="defenceLevel7" onclick="upgradeDefence()">Level 7</button>
-            <button id="defenceLevel8" onclick="upgradeDefence()">Level 8</button>
-            <button id="defenceLevel9" onclick="upgradeDefence()">Level 9</button>
-            <button id="defenceLevel10" onclick="upgradeDefence()">Level 10</button>
+            <button id="defenceLevel1" onclick="upgradeDefence()">
+              Level 1
+            </button>
+            <button id="defenceLevel2" onclick="upgradeDefence()">
+              Level 2
+            </button>
+            <button id="defenceLevel3" onclick="upgradeDefence()">
+              Level 3
+            </button>
+            <button id="defenceLevel4" onclick="upgradeDefence()">
+              Level 4
+            </button>
+            <button id="defenceLevel5" onclick="upgradeDefence()">
+              Level 5
+            </button>
+            <button id="defenceLevel6" onclick="upgradeDefence()">
+              Level 6
+            </button>
+            <button id="defenceLevel7" onclick="upgradeDefence()">
+              Level 7
+            </button>
+            <button id="defenceLevel8" onclick="upgradeDefence()">
+              Level 8
+            </button>
+            <button id="defenceLevel9" onclick="upgradeDefence()">
+              Level 9
+            </button>
+            <button id="defenceLevel10" onclick="upgradeDefence()">
+              Level 10
+            </button>
           </div>
           <button onclick="closeMenu('upgradesPopup')">Cancel</button>
         </div>
       </div>
-      
-     
-    
-    
+    </div>
 
-
-    <script src="scripts.js"></script>
     <script src="characters.js"></script>
+    <script src="scripts.js"></script>
   </body>
 </html>
