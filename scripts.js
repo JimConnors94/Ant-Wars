@@ -109,12 +109,12 @@ function openSpecialEvent() {
               if (response.action) {
                 response.action();
                 setTimeout(() => {
-                  closeSpecialEvent();
+                  closeMenu("eventPopup");
                 }, 500);
               } else if (response.next) {
                 displayDialogue(response.next);
               } else {
-                closeSpecialEvent();
+                closeMenu("eventPopup");
               }
             });
             dialogueOptions.appendChild(button);
@@ -133,15 +133,17 @@ function openSpecialEvent() {
 function mantissaFindsMantis() {
   if (gameState.mantisInCamp) {
     gameState.mantisInCamp = false;
-    gameState.mantissaInCamp = true; 
-    addToLog("Mantissa found Mantis and dragged him away. Maybe we should check on him later...");
+    gameState.mantissaInCamp = true;
+    addToLog(
+      "Mantissa found Mantis and dragged him away. Maybe we should check on him later..."
+    );
     closeMenu("eventPopup");
   }
 }
 
 function mantissaAttack() {
   const { enemyAttack, playerDefence } = calculateCombatStats();
-  let antLoss = Math.round((10000) / playerDefence);
+  let antLoss = Math.round(10000 / playerDefence);
 
   playSound(enemyRaid);
   addToLog("Mantissa attacked your colony in a fit of rage!");
@@ -208,7 +210,9 @@ function tradeEggsForSticks() {
 
 function mantisInCamp() {
   gameState.mantisInCamp = true;
-  addToLog("Mantis the Elusive has joined your camp. He will teach your warriors advanced techniques.");
+  addToLog(
+    "Mantis the Elusive has joined your camp. He will teach your warriors advanced techniques."
+  );
   closeMenu("eventPopup");
 }
 
@@ -219,18 +223,24 @@ function mantisFlees() {
 
 function caterpillarInCamp() {
   gameState.caterpillarInCamp = true;
-  addToLog("Caterpillar the Silkweaver has joined your camp. She will trade silk for food.");
+  addToLog(
+    "Caterpillar the Silkweaver has joined your camp. She will trade silk for food."
+  );
   closeMenu("eventPopup");
 }
 
 function caterpillarLeaves() {
-  addToLog("Caterpillar the Silkweaver leaves, disappointed by your rejection.");
+  addToLog(
+    "Caterpillar the Silkweaver leaves, disappointed by your rejection."
+  );
   closeMenu("eventPopup");
 }
 
 function spiderInCamp() {
   gameState.spiderInCamp = true;
-  addToLog("Angoliant the Terrible has told you the location of her dark liar... She will provide power in exchange for sacrifices.");
+  addToLog(
+    "Angoliant the Terrible has told you the location of her dark liar... She will provide power in exchange for sacrifices."
+  );
   closeMenu("eventPopup");
 }
 
@@ -246,7 +256,7 @@ function openMenu(menuId) {
     const merchantPopup = document.getElementById("merchantPopup");
     merchantPopup.innerHTML = "";
 
-    // Add Angoliant the Terrible 
+    // Add Angoliant the Terrible
     if (gameState.spiderInCamp) {
       const spiderButton = document.createElement("button");
       spiderButton.textContent = "Angoliant the Terrible";
@@ -254,7 +264,7 @@ function openMenu(menuId) {
       merchantPopup.appendChild(spiderButton);
     }
 
-    // Add Heracles the Mighty 
+    // Add Heracles the Mighty
     if (gameState.heraclesInCamp) {
       const heraclesButton = document.createElement("button");
       heraclesButton.textContent = "Heracles the Mighty";
@@ -270,7 +280,7 @@ function openMenu(menuId) {
       merchantPopup.appendChild(mantisButton);
     }
 
-    // Add Mantissa the Fierce 
+    // Add Mantissa the Fierce
     if (gameState.mantissaInCamp) {
       const mantissaButton = document.createElement("button");
       mantissaButton.textContent = "Mantissa the Fierce";
@@ -278,7 +288,7 @@ function openMenu(menuId) {
       merchantPopup.appendChild(mantissaButton);
     }
 
-    // Add Caterpillar the Silkweaver 
+    // Add Caterpillar the Silkweaver
     if (gameState.caterpillarInCamp) {
       const caterpillarButton = document.createElement("button");
       caterpillarButton.textContent = "Caterpillar the Silkweaver";
@@ -286,7 +296,6 @@ function openMenu(menuId) {
       merchantPopup.appendChild(caterpillarButton);
     }
 
-    
     const closeButton = document.createElement("button");
     closeButton.textContent = "Close";
     closeButton.onclick = () => closeMenu("merchantPopup");
@@ -305,35 +314,35 @@ function openMenu(menuId) {
     if (gameState.spiderInCamp) {
       document.getElementById("spiderPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); 
+    closeMenu("shopPopup");
   }
 
   if (menuId === "heraclesPopup") {
     if (gameState.heraclesInCamp) {
       document.getElementById("heraclesPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); 
+    closeMenu("shopPopup");
   }
 
   if (menuId === "mantisPopup") {
     if (gameState.mantisInCamp) {
       document.getElementById("mantisPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); 
+    closeMenu("shopPopup");
   }
 
   if (menuId === "mantissaPopup") {
     if (gameState.mantissaInCamp) {
       document.getElementById("mantissaPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); 
+    closeMenu("shopPopup");
   }
 
   if (menuId === "caterpillarPopup") {
     if (gameState.caterpillarInCamp) {
       document.getElementById("caterpillarPopup").style.display = "flex";
     }
-    closeMenu("shopPopup"); 
+    closeMenu("shopPopup");
   }
 
   if (menuId === "savedGamesPopup") {
@@ -395,7 +404,17 @@ function openMenu(menuId) {
 }
 
 function closeMenu(menuId) {
+  const doc = document.getElementById(menuId);
+
+  if (!doc) {
+    return;
+  }
+
   document.getElementById(menuId).style.display = "none";
+
+  if (menuId === "eventPopup") {
+    resumeTimer();
+  }
 
   if (menuId === "merchantPopup") {
     document.getElementById("shopPopup").style.display = "flex";
@@ -816,16 +835,16 @@ function checkDefeat() {
 
 function hatchAnt(type) {
   if (gameState.playerAntHill.resources.eggs >= 1) {
-    gameState.playerAntHill.ants[type] += 1;
+    const antType = type + "s";
+
+    gameState.playerAntHill.ants[antType] += 1;
     gameState.playerAntHill.resources.eggs -= 1;
     playSound(hatchingSound);
 
     console.log(`A ${type} was hatched!`);
 
     updateResourceStats();
-    updateHatchButton(
-      `hatch${type.charAt(0).toUpperCase() + type.slice(1, -1)}`
-    );
+    updateHatchButton(`hatch${type.charAt(0).toUpperCase() + type.slice(1)}`);
   } else {
     const eggCountButton = document.getElementById("eggCount");
     eggCountButton.classList.add("noEggs");
