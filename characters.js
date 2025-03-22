@@ -5,7 +5,6 @@ const characters = [
     music: "audio/spiderMusic.wav",
     encounters: [
       {
-        // Angoliant Conversation 1
         text: "While out on patrol, a troop of 10 warrior ants encounter a terrifying beast of a spider! They cower in fear, waiting for the monster to rip them apart... But it appears the spider wishes to speak?",
         responses: [
           {
@@ -124,21 +123,27 @@ const characters = [
           },
         ],
       },
-      {
-        // Angoliant Conversation 2
-        text: "Oh it's you again",
-        responses: [
-          {
-            text: "No, we have come to end you once and for all!",
-            action: spiderAttack,
-          },
-          {
-            text: "Very well... Take what you need.",
-            action: spiderInCamp,
-          },
-        ],
-      },
     ],
+    merchantDialogue: {
+      intro: "Ahhh, you've returned... Angoliant has been waiting. You seek power, yes? Angoliant can provide... but it will cost you. Sacrifices must be made for greatness. What will you offer Angoliant today?",
+      trades: [
+        {
+          name: "Venom of the Spider Queen",
+          description: "This venom will make your warriors' strikes deadly. Even the strongest enemies will fall before its poison. But it will cost you... 10 workers. Do you accept?",
+          cost: { workers: 100 },
+          effect: { attackMultiplier: 1 },
+          action: "tradeWithSpiderVenom",
+        },
+        {
+          name: "Web of Binding",
+          description: "This web will entangle your enemies, slowing their movements and weakening their attacks. A perfect tool for defence... but it will cost you... 5 workers. Do you accept?",
+          cost: { workers: 100 },
+          effect: { defenceMultiplier: 1 },
+          action: "tradeWithSpiderWeb",
+        },
+      ],
+      leave: "No? You disappoint Angoliant. But Angoliant will be here... waiting. Hahahaha!",
+    },
   },
   {
     name: "Heracles the Mighty",
@@ -198,44 +203,27 @@ const characters = [
           },
         ],
       },
-      {
-        text: "This is the second encounter with Heracles the Mighty",
-        responses: [
-          {
-            text: "Oh it's you again...",
-            next: {
-              text: "Probably him vying for more ants",
-              responses: [
-                {
-                  text: "No way hose",
-                  next: {
-                    text: "I-is that s-so... b-but what about my... my gains!!! Wahhhh!",
-                    responses: [
-                      {
-                        text: "That's right, scram!",
-                        action: heraclesCrying,
-                      },
-                    ],
-                  },
-                },
-                {
-                  text: "Did you say sticks?",
-                  next: {
-                    text: "Hurrah! I will be working out over here! Bring me all the eggs you can!",
-                    responses: [
-                      {
-                        text: "Alright, deal.",
-                        action: heraclesInCamp,
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
     ],
+    merchantDialogue: {
+      intro: "Ah, my ant friends! Heracles the Mighty is here to make you stronger! But remember, strength comes at a price. My protein shakes are legendary, but they require... ant eggs. What will it be?",
+      trades: [
+        {
+          name: "Protein Shake",
+          description: "This shake will make your ants stronger, faster, and more resilient! Perfect for boosting your colony's stats. But it will cost you... 10 eggs. Do you accept?",
+          cost: { eggs: 10 },
+          effect: { attackMultiplier: 0.5, defenceMultiplier: 0.5 },
+          action: "tradeWithHeraclesProtein",
+        },
+        {
+          name: "Stick Bundle",
+          description: "Need more sticks for your colony? Heracles has plenty! But I need eggs to keep my gains. 10 eggs for 100 sticks. Deal?",
+          cost: { eggs: 10 },
+          effect: { sticks: 100 },
+          action: "tradeWithHeraclesSticks",
+        },
+      ],
+      leave: "No deal? Very well. But remember, Heracles is always here to help... for a price!",
+    },
   },
   {
     name: "Mantis the Elusive",
@@ -283,56 +271,29 @@ const characters = [
               ],
             },
           },
-          {
-            text: "We don't have time for this! Get out of here!",
-            next: {
-              name: "Mantis the Elusive",
-              icon: "img/mantis.png",
-              text: "You'll regret this! She's going to find me, and when she does, she'll take it out on you!",
-              responses: [
-                {
-                  text: "We'll take our chances. Now leave!",
-                  action: mantisFlees,
-                },
-              ],
-            },
-          },
-        ],
-      },
-      {
-        text: "Mantis the Elusive is back, looking even more panicked than before. 'She's closer! Please, I need a better hiding spot!'",
-        responses: [
-          {
-            text: "We already helped you once. What's in it for us this time?",
-            next: {
-              name: "Mantis the Elusive",
-              icon: "img/mantis.png",
-              text: "I'll teach your warriors an advanced mantis technique! It's called the 'Blade of a Thousand Cuts'! Just... please, hide me!",
-              responses: [
-                {
-                  text: "Fine, but this is the last time!",
-                  action: mantisInCamp,
-                },
-              ],
-            },
-          },
-          {
-            text: "No way! You're on your own this time!",
-            next: {
-              name: "Mantis the Elusive",
-              icon: "img/mantis.png",
-              text: "You're heartless! Fine, I'll find somewhere else to hide... but don't come crying to me when she starts asking questions!",
-              responses: [
-                {
-                  text: "Good riddance!",
-                  action: mantisFlees,
-                },
-              ],
-            },
-          },
         ],
       },
     ],
+    merchantDialogue: {
+      intro: "Shhh! Keep it down! She might hear us... Oh, it's just you. Phew. Listen, I can teach your warriors some advanced mantis techniques, but I need a safe place to hide. What do you say?",
+      trades: [
+        {
+          name: "Blade of a Thousand Cuts",
+          description: "This technique will make your warriors strike faster and harder. Perfect for taking down enemies quickly. But it will cost you... 5 eggs. Do you accept?",
+          cost: { eggs: 5 },
+          effect: { attackMultiplier: 1 },
+          action: "tradeWithMantisBlade",
+        },
+        {
+          name: "Mantis Reflexes",
+          description: "This training will make your guards more agile, allowing them to dodge enemy attacks with ease. But it will cost you... 5 eggs. Do you accept?",
+          cost: { eggs: 5 },
+          effect: { defenceMultiplier: 1 },
+          action: "tradeWithMantisReflexes",
+        },
+      ],
+      leave: "Fine, fine. But if she finds me, I'm blaming you!",
+    },
   },
   {
     name: "Caterpillar the Silkweaver",
@@ -380,56 +341,29 @@ const characters = [
               ],
             },
           },
-          {
-            text: "We don't trust outsiders. Get out of here!",
-            next: {
-              name: "Caterpillar the Silkweaver",
-              icon: "img/caterpillar.png",
-              text: "Oh dear, that's unfortunate. I mean no harm, but I'll be on my way. Goodbye!",
-              responses: [
-                {
-                  text: "Good riddance!",
-                  action: caterpillarLeaves,
-                },
-              ],
-            },
-          },
-        ],
-      },
-      {
-        text: "The caterpillar returns, carrying another bundle of silk. 'Hello again! I have more silk to trade. Are you interested?'",
-        responses: [
-          {
-            text: "We could use more silk. What do you want this time?",
-            next: {
-              name: "Caterpillar the Silkweaver",
-              icon: "img/caterpillar.png",
-              text: "Same as before—some of your stored food. I promise, this silk is even better than the last batch!",
-              responses: [
-                {
-                  text: "Alright, let's trade.",
-                  action: caterpillarInCamp,
-                },
-              ],
-            },
-          },
-          {
-            text: "We don't need any more silk. Go away!",
-            next: {
-              name: "Caterpillar the Silkweaver",
-              icon: "img/caterpillar.png",
-              text: "Oh... very well. I'll take my silk elsewhere. Goodbye!",
-              responses: [
-                {
-                  text: "Don't let the door hit you on the way out!",
-                  action: caterpillarLeaves,
-                },
-              ],
-            },
-          },
         ],
       },
     ],
+    merchantDialogue: {
+      intro: "Hello again, ants! I’ve brought more silk for trade. It’s perfect for reinforcing your nests and making your colony stronger. What do you need today?",
+      trades: [
+        {
+          name: "Silk Reinforcement",
+          description: "This silk will strengthen your nest walls, making it harder for enemies to break through. It will cost you... 50 food. Do you accept?",
+          cost: { food: 500 },
+          effect: { defenceMultiplier: 1 },
+          action: "tradeWithCaterpillarSilk",
+        },
+        {
+          name: "Silk Rope",
+          description: "This rope is perfect for building bridges and traps. It will help your workers gather food faster. It will cost you... 30 food. Do you accept?",
+          cost: { food: 300 },
+          effect: { foodGathering: 0.1 }, 
+          action: "tradeWithCaterpillarRope",
+        },
+      ],
+      leave: "Oh, alright. But if you change your mind, you know where to find me!",
+    },
   },
   {
     name: "Mantissa the Fierce",
@@ -484,53 +418,31 @@ const characters = [
                     ],
                   },
                 },
-                {
-                  text: "Okay, he's here. But why are you so desperate to find him?",
-                  next: {
-                    name: "Mantissa the Fierce",
-                    icon: "img/female_mantis.png",
-                    text: "Because he's mine! We're meant to be together, but he keeps running away! I just want to love him... and maybe nibble on him a little. Is that so wrong?",
-                    responses: [
-                      {
-                        text: "Uh... that sounds... intense. We'll hand him over.",
-                        action: mantissaFindsMantis,
-                      },
-                      {
-                        text: "That's terrifying. We're not helping you!",
-                        next: {
-                          name: "Mantissa the Fierce",
-                          icon: "img/female_mantis.png",
-                          text: "Then I'll take him by force! Prepare yourselves!",
-                          responses: [
-                            {
-                              text: "We won't let you harm our colony!",
-                              action: mantissaAttack,
-                            },
-                          ],
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            text: "We don't know who you're talking about. Leave now!",
-            next: {
-              name: "Mantissa the Fierce",
-              icon: "img/female_mantis.png",
-              text: "You dare lie to me?! I'll tear this place apart until I find him!",
-              responses: [
-                {
-                  text: "We won't let you harm our colony!",
-                  action: mantissaAttack,
-                },
               ],
             },
           },
         ],
       },
     ],
+    merchantDialogue: {
+      intro: "You! Have you seen him? That slippery little coward? No? Well, while I’m here, I might as well offer you something. I’ve got some... unique skills to share. For a price, of course.",
+      trades: [
+        {
+          name: "Mantissa’s Fury",
+          description: "I’ll teach your warriors how to channel their rage into devastating attacks. But it will cost you... 100 eggs. Do you accept?",
+          cost: { eggs: 10 },
+          effect: { attackMultiplier: 1.5 },
+          action: "tradeWithMantissaFury",
+        },
+        {
+          name: "Mantissa’s Resilience",
+          description: "I’ll show your guards how to endure even the fiercest attacks. But it will cost you... 10 eggs. Do you accept?",
+          cost: { eggs: 10 },
+          effect: { defenceMultiplier: 1.5 },
+          action: "tradeWithMantissaResilience",
+        },
+      ],
+      leave: "Fine. But if you see him, tell him I’m coming!",
+    },
   },
 ];
