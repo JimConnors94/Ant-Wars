@@ -129,17 +129,15 @@ const characters = [
       trades: [
         {
           name: "Venom of the Spider Queen",
-          description: "This venom will make your warriors' strikes deadly. Even the strongest enemies will fall before its poison. But it will cost you... 10 workers. Do you accept?",
+          description: "This venom will make your warriors' strikes deadly. Even the strongest enemies will fall before its poison. But it will cost you... 100 workers. Do you accept?",
           cost: { workers: 100 },
-          effect: { attackMultiplier: 1 },
-          action: "tradeWithSpiderVenom",
+          reward: { attackMultiplier: 0.5 }
         },
         {
           name: "Web of Binding",
-          description: "This web will entangle your enemies, slowing their movements and weakening their attacks. A perfect tool for defence... but it will cost you... 5 workers. Do you accept?",
+          description: "This web will entangle your enemies, slowing their movements and weakening their attacks. A perfect tool for defence... but it will cost you... 100 workers. Do you accept?",
           cost: { workers: 100 },
-          effect: { defenceMultiplier: 1 },
-          action: "tradeWithSpiderWeb",
+          reward: { defenceMultiplier: 0.5 }
         },
       ],
       leave: "No? You disappoint Angoliant. But Angoliant will be here... waiting. Hahahaha!",
@@ -211,15 +209,13 @@ const characters = [
           name: "Protein Shake",
           description: "This shake will make your ants stronger, faster, and more resilient! Perfect for boosting your colony's stats. But it will cost you... 10 eggs. Do you accept?",
           cost: { eggs: 10 },
-          effect: { attackMultiplier: 0.5, defenceMultiplier: 0.5 },
-          action: "tradeWithHeraclesProtein",
+          reward: { attackMultiplier: 0.2, defenceMultiplier: 0.2 }
         },
         {
           name: "Stick Bundle",
           description: "Need more sticks for your colony? Heracles has plenty! But I need eggs to keep my gains. 10 eggs for 100 sticks. Deal?",
           cost: { eggs: 10 },
-          effect: { sticks: 100 },
-          action: "tradeWithHeraclesSticks",
+          reward: { sticks: 100 }
         },
       ],
       leave: "No deal? Very well. But remember, Heracles is always here to help... for a price!",
@@ -281,15 +277,13 @@ const characters = [
           name: "Blade of a Thousand Cuts",
           description: "This technique will make your warriors strike faster and harder. Perfect for taking down enemies quickly. But it will cost you... 5 eggs. Do you accept?",
           cost: { eggs: 5 },
-          effect: { attackMultiplier: 1 },
-          action: "tradeWithMantisBlade",
+          reward: { attackMultiplier: 0.3 }
         },
         {
           name: "Mantis Reflexes",
           description: "This training will make your guards more agile, allowing them to dodge enemy attacks with ease. But it will cost you... 5 eggs. Do you accept?",
           cost: { eggs: 5 },
-          effect: { defenceMultiplier: 1 },
-          action: "tradeWithMantisReflexes",
+          reward: { defenceMultiplier: 0.3 }
         },
       ],
       leave: "Fine, fine. But if she finds me, I'm blaming you!",
@@ -345,21 +339,19 @@ const characters = [
       },
     ],
     merchantDialogue: {
-      intro: "Hello again, ants! I’ve brought more silk for trade. It’s perfect for reinforcing your nests and making your colony stronger. What do you need today?",
+      intro: "Hello again, ants! I've brought more silk for trade. It's perfect for reinforcing your nests and making your colony stronger. What do you need today?",
       trades: [
         {
           name: "Silk Reinforcement",
-          description: "This silk will strengthen your nest walls, making it harder for enemies to break through. It will cost you... 50 food. Do you accept?",
+          description: "This silk will strengthen your nest walls, making it harder for enemies to break through. It will cost you... 500 food. Do you accept?",
           cost: { food: 500 },
-          effect: { defenceMultiplier: 1 },
-          action: "tradeWithCaterpillarSilk",
+          reward: { defenceMultiplier: 0.5 }
         },
         {
           name: "Silk Rope",
-          description: "This rope is perfect for building bridges and traps. It will help your workers gather food faster. It will cost you... 30 food. Do you accept?",
+          description: "This rope is perfect for building bridges and traps. It will help your workers gather food faster. It will cost you... 300 food. Do you accept?",
           cost: { food: 300 },
-          effect: { foodGathering: 0.1 }, 
-          action: "tradeWithCaterpillarRope",
+          reward: { foodGathering: 1.2 }
         },
       ],
       leave: "Oh, alright. But if you change your mind, you know where to find me!",
@@ -425,24 +417,22 @@ const characters = [
       },
     ],
     merchantDialogue: {
-      intro: "You! Have you seen him? That slippery little coward? No? Well, while I’m here, I might as well offer you something. I’ve got some... unique skills to share. For a price, of course.",
+      intro: "You! Have you seen him? That slippery little coward? No? Well, while I'm here, I might as well offer you something. I've got some... unique skills to share. For a price, of course.",
       trades: [
         {
-          name: "Mantissa’s Fury",
-          description: "I’ll teach your warriors how to channel their rage into devastating attacks. But it will cost you... 100 eggs. Do you accept?",
+          name: "Mantissa's Fury",
+          description: "I'll teach your warriors how to channel their rage into devastating attacks. But it will cost you... 10 eggs. Do you accept?",
           cost: { eggs: 10 },
-          effect: { attackMultiplier: 1.5 },
-          action: "tradeWithMantissaFury",
+          reward: { attackMultiplier: 0.5 }
         },
         {
-          name: "Mantissa’s Resilience",
-          description: "I’ll show your guards how to endure even the fiercest attacks. But it will cost you... 10 eggs. Do you accept?",
+          name: "Mantissa's Resilience",
+          description: "I'll show your guards how to endure even the fiercest attacks. But it will cost you... 10 eggs. Do you accept?",
           cost: { eggs: 10 },
-          effect: { defenceMultiplier: 1.5 },
-          action: "tradeWithMantissaResilience",
+          reward: { defenceMultiplier: 0.5 }
         },
       ],
-      leave: "Fine. But if you see him, tell him I’m coming!",
+      leave: "Fine. But if you see him, tell him I'm coming!",
     },
   },
 ];
